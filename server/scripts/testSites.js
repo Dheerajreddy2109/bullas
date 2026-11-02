@@ -1,4 +1,6 @@
 import http from 'node:http';
+import { randomBytes } from 'node:crypto';
+import bcrypt from 'bcryptjs';
 import mongoose from 'mongoose';
 import app from '../src/app.js';
 import { connectDB } from '../src/db.js';
@@ -12,6 +14,8 @@ const PREFIX = 'testsites-';
 const INACTIVE_SLUG = 'testsites-inactive';
 const ROOT = process.env.ROOT_DOMAIN;
 const ADMIN_HOST = `admin.${ROOT}`;
+// Random for each run, so a leftover account could never be logged in to.
+const TEMP_PASSWORD = randomBytes(16).toString('hex');
 
 let failures = 0;
 function check(label, passed) {
@@ -21,6 +25,7 @@ function check(label, passed) {
 
 async function cleanUp() {
   await Site.deleteMany({ subdomain: { $regex: `^${PREFIX}` } });
+  await User.deleteMany({ email: { $regex: `^${PREFIX}.*@bullas\\.test$` } });
   await Template.deleteOne({ slug: INACTIVE_SLUG });
 }
 
@@ -75,17 +80,27 @@ try {
 
   const cookie = `${AUTH_COOKIE}=${signToken(admin)}`;
   const api = (options) => request(port, { cookie, ...options });
-  const create = (fields) =>
-    api({
+  let ownerCount = 0;
+  const create = (fields) => {
+    ownerCount += 1;
+    return api({
       method: 'POST',
-      path: '/api/admin/sites',
-      body: { name: 'Test', templateSlug: template.slug, ...fields },
+      path: '/api/sites',
+      body: {
+        name: 'Test',
+        templateSlug: template.slug,
+        ownerName: 'Test Owner',
+        ownerEmail: `${PREFIX}${ownerCount}@bullas.test`,
+        temporaryPassword: TEMP_PASSWORD,
+        ...fields,
+      },
     });
+  };
 
-  const anonymous = await request(port, { path: '/api/admin/sites' });
+  const anonymous = await request(port, { path: '/api/sites' });
   check('not logged in gets 401', anonymous.status === 401);
 
-  const customerHost = await api({ path: '/api/admin/sites', host: `demo.${ROOT}` });
+  const customerHost = await api({ path: '/api/sites', host: `demo.${ROOT}` });
   check('a customer domain gets 404', customerHost.status === 404);
 
   const a = await create({
@@ -101,8 +116,34 @@ try {
   const savedA = await Site.findById(a.json._id);
   check(
     'extra fields in the request are ignored',
-    savedA.customDomain === undefined && savedA.domainStatus === 'none' && !savedA.ownerId
+    savedA.customDomain === undefined &&
+      savedA.domainStatus === 'none' &&
+      !savedA.ownerId?.equals(admin._id)
   );
+
+  const ownerA = await User.findById(savedA.ownerId).select('+passwordHash');
+  check(
+    'the owner is created and linked to the site both ways',
+    ownerA?.role === 'siteowner' && ownerA.siteId.equals(savedA._id)
+  );
+  check('a new owner must change their password', ownerA?.mustChangePassword === true);
+  check(
+    'the password is stored only as a hash',
+    ownerA?.passwordHash !== TEMP_PASSWORD && (await bcrypt.compare(TEMP_PASSWORD, ownerA.passwordHash))
+  );
+  check('the response never contains the password', !JSON.stringify(a.json).includes(TEMP_PASSWORD));
+
+  const blankOwner = await create({ subdomain: `${PREFIX}rollback`, ownerName: '   ' });
+  check(
+    'a failed owner leaves no site behind',
+    blankOwner.status === 400 && !(await Site.exists({ subdomain: `${PREFIX}rollback` }))
+  );
+
+  const badEmail = await create({ subdomain: `${PREFIX}bademail`, ownerEmail: 'not-an-email' });
+  check('an invalid owner email gets 400', badEmail.status === 400);
+
+  const shortPassword = await create({ subdomain: `${PREFIX}shortpw`, temporaryPassword: 'short' });
+  check('a short temporary password gets 400', shortPassword.status === 400);
 
   const b = await create({ subdomain: `${PREFIX}b` });
   savedA.content.sections[0].label = 'Changed';
@@ -116,11 +157,21 @@ try {
       freshTemplate.defaultContent.sections[0].label !== 'Changed'
   );
 
+  const ownersBefore = await User.countDocuments({ email: { $regex: `^${PREFIX}` } });
   const duplicate = await create({ subdomain: `${PREFIX}a` });
   check('a duplicate subdomain gets 409', duplicate.status === 409);
 
   const capitalised = await create({ subdomain: `${PREFIX}A`.toUpperCase() });
   check('a differently capitalised subdomain gets 409', capitalised.status === 409);
+  check('the duplicate message is friendly', duplicate.json?.error === 'That subdomain is already taken');
+  check(
+    'a rejected duplicate leaves no extra owner behind',
+    (await User.countDocuments({ email: { $regex: `^${PREFIX}` } })) === ownersBefore
+  );
+
+  check('a 2-character subdomain gets 400', (await create({ subdomain: 'ab' })).status === 400);
+  check('a 31-character subdomain gets 400', (await create({ subdomain: 'a'.repeat(31) })).status === 400);
+  check('the reserved name root gets 400', (await create({ subdomain: 'root' })).status === 400);
 
   const reserved = await create({ subdomain: 'admin' });
   check('a reserved subdomain gets 400', reserved.status === 400);
@@ -137,13 +188,13 @@ try {
   const inactive = await create({ subdomain: `${PREFIX}d`, templateSlug: INACTIVE_SLUG });
   check('an inactive template gets 400', inactive.status === 400);
 
-  const notJson = await api({ method: 'POST', path: '/api/admin/sites', raw: 'name=Test' });
+  const notJson = await api({ method: 'POST', path: '/api/sites', raw: 'name=Test' });
   check('a non-JSON request gets 415', notJson.status === 415);
 
-  const statusPath = `/api/admin/sites/${a.json._id}/status`;
+  const statusPath = `/api/sites/${a.json._id}/status`;
   const badId = await api({
     method: 'PATCH',
-    path: '/api/admin/sites/not-an-id/status',
+    path: '/api/sites/not-an-id/status',
     body: { status: 'published' },
   });
   check('an invalid site ID gets 400', badId.status === 400);
@@ -161,9 +212,10 @@ try {
   const afterPublish = await request(port, { path: '/api/site', host: siteHost });
   check('a published site is public', afterPublish.status === 200);
 
-  const list = await api({ path: '/api/admin/sites' });
+  const list = await api({ path: '/api/sites' });
   const listed = list.json?.find((site) => site._id === a.json._id);
   check('the site list includes the site without content', Boolean(listed) && !('content' in listed));
+  check('the site list includes the template name', listed?.templateId?.name === template.name);
 
   const templates = await api({ path: '/api/admin/templates' });
   check(

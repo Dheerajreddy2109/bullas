@@ -1,0 +1,28 @@
+.about {
+  display: grid;
+  grid-template-columns: minmax(0, 220px) 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+.image {
+  height: 170px;
+  border-radius: 10px;
+}
+
+.title {
+  margin: 0 0 6px;
+  font-size: 19px;
+  color: var(--ink);
+}
+
+.text {
+  margin: 0;
+  white-space: pre-line;
+}
+
+@media (max-width: 560px) {
+  .about {
+    grid-template-columns: 1fr;
+  }
+}

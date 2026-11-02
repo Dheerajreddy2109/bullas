@@ -1,0 +1,29 @@
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.title {
+  margin: 0;
+  font-size: 28px;
+}
+
+.button {
+  padding: 8px 16px;
+  font-weight: 600;
+  color: #fff;
+  text-decoration: none;
+  background: #0b6b3a;
+  border-radius: 8px;
+}
+
+.error {
+  padding: 10px 12px;
+  color: #991b1b;
+  background: #fee2e2;
+  border-radius: 8px;
+}

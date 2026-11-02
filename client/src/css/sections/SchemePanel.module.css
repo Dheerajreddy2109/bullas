@@ -1,0 +1,19 @@
+.panel {
+  padding: 14px;
+  border-radius: 12px;
+}
+
+.peach {
+  background: #ffe9d2;
+}
+
+.pink {
+  background: #fde0e6;
+}
+
+.title {
+  margin: 0 0 12px;
+  font-size: 19px;
+  text-align: center;
+  color: #b3261e;
+}

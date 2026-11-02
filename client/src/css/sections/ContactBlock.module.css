@@ -1,0 +1,16 @@
+.contact {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.address {
+  margin: 0;
+  white-space: pre-line;
+}
+
+.link {
+  font-weight: 600;
+  color: var(--brand);
+}

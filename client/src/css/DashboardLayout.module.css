@@ -1,0 +1,21 @@
+.layout {
+  display: flex;
+  min-height: 100svh;
+}
+
+.main {
+  flex-grow: 1;
+  min-width: 0;
+  padding: 28px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 720px) {
+  .layout {
+    flex-direction: column;
+  }
+
+  .main {
+    padding: 20px 16px;
+  }
+}

@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema(
   {
-    name: { type: String, required: true, trim: true },
+    name: { type: String, required: [true, 'Name is required'], trim: true },
     // Lowercase so Dheeraj@x.com and dheeraj@x.com can't become two accounts.
     email: { type: String, required: true, lowercase: true, trim: true },
     // select: false keeps the hash out of query results, so an API can't leak it by accident.
@@ -23,6 +23,8 @@ const userSchema = new mongoose.Schema(
       },
     },
     twoFactorEnabled: { type: Boolean, default: false },
+    // Set when someone else chose the password, so it stops being known to two people.
+    mustChangePassword: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

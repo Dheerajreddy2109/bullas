@@ -1,0 +1,18 @@
+.site {
+  --ink: #1c1917;
+  --tint: #ede9fe;
+  --card-radius: 0;
+  --footer: #1c1917;
+
+  color: #57534e;
+  background: #fafaf9;
+}
+
+.sections {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 16px 16px 64px;
+}

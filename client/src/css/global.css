@@ -1,22 +1,16 @@
 /* Only site-wide rules belong here; component styles go in their own module file. */
 :root {
-  --text: #6b6375;
+  --text: #4b5563;
   --text-heading: #08060d;
-  --bg: #fff;
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --bg: #f6f7f9;
+  --surface: #fff;
+  --border: #e5e4e7;
+  /* Noto Sans Telugu is listed so Telugu text uses it wherever the device has it installed. */
+  --sans: system-ui, 'Segoe UI', Roboto, 'Noto Sans Telugu', sans-serif;
 
-  font: 18px/145% var(--sans);
-  color-scheme: light dark;
+  font: 16px/150% var(--sans);
   color: var(--text);
   background: var(--bg);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-heading: #f3f4f6;
-    --bg: #16171d;
-  }
 }
 
 body {
@@ -25,5 +19,9 @@ body {
 
 h1 {
   color: var(--text-heading);
-  font-weight: 500;
+  font-weight: 600;
+}
+
+img {
+  max-width: 100%;
 }

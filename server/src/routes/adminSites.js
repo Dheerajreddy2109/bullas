@@ -1,12 +1,6 @@
 import { Router } from 'express';
-import {
-  createSite,
-  listSites,
-  listTemplates,
-  updateSiteStatus,
-} from '../controllers/adminSiteController.js';
+import { getTemplate, listTemplates } from '../controllers/adminSiteController.js';
 import { requireAdminHost, requireAuth, requireRole } from '../middleware/requireAuth.js';
-import { requireJson } from '../middleware/requireJson.js';
 
 const router = Router();
 
@@ -14,8 +8,6 @@ const router = Router();
 router.use(requireAdminHost, requireAuth, requireRole('superadmin'));
 
 router.get('/templates', listTemplates);
-router.get('/sites', listSites);
-router.post('/sites', requireJson, createSite);
-router.patch('/sites/:id/status', requireJson, updateSiteStatus);
+router.get('/templates/:slug', getTemplate);
 
 export default router;

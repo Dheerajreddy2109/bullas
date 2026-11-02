@@ -1,0 +1,29 @@
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.tab {
+  padding: 8px 16px;
+  font: inherit;
+  font-weight: 600;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.active {
+  color: #fff;
+  background: #1d5fc4;
+  border-color: #1d5fc4;
+}
+
+.panel {
+  padding: 14px;
+  background: #fff;
+  border-radius: 12px;
+}

@@ -36,7 +36,8 @@ export function requireAdminHost(req, res, next) {
   next();
 }
 
-export async function requireAuth(req, res, next) {
+// Checks who is asking, for the few routes someone with a temporary password may still use.
+export async function requireLogin(req, res, next) {
   let payload;
   try {
     // Fixing the algorithm stops a forged token from choosing a weaker one.
@@ -72,6 +73,19 @@ export async function requireAuth(req, res, next) {
   req.user = user;
   next();
 }
+
+function requirePasswordChanged(req, res, next) {
+  if (req.user.mustChangePassword) {
+    return res.status(403).json({
+      error: 'Change your temporary password first',
+      code: 'PASSWORD_CHANGE_REQUIRED',
+    });
+  }
+  next();
+}
+
+// The default for all routes, so a new route is blocked for temporary passwords automatically.
+export const requireAuth = [requireLogin, requirePasswordChanged];
 
 export function requireRole(...roles) {
   return (req, res, next) => {

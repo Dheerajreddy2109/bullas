@@ -3,6 +3,10 @@ import { connectDB } from '../src/db.js';
 import User from '../models/User.js';
 import Template from '../models/Template.js';
 import Site from '../models/Site.js';
+import businessStarter from '../seed/templates/businessStarter.js';
+import localShop from '../seed/templates/localShop.js';
+import panchayatClassic from '../seed/templates/panchayatClassic.js';
+import portfolioLight from '../seed/templates/portfolioLight.js';
 
 const superAdmin = {
   name: 'Super Admin',
@@ -12,71 +16,47 @@ const superAdmin = {
   role: 'superadmin',
 };
 
-const template = {
-  name: 'Business Starter',
-  slug: 'business-starter',
-  description: 'A simple business site with a banner, about text and contact details.',
-  defaultContent: {
-    sections: [
-      {
-        key: 'banner',
-        label: 'Banner',
-        fields: {
-          heading: { type: 'text', value: 'Welcome to our business' },
-          image: { type: 'image', value: '' },
-        },
-      },
-      {
-        key: 'about',
-        label: 'About',
-        fields: {
-          text: { type: 'textarea', value: 'Tell visitors about your business.' },
-        },
-      },
-      {
-        key: 'contact',
-        label: 'Contact',
-        fields: {
-          email: { type: 'text', value: '' },
-          phone: { type: 'text', value: '' },
-        },
-      },
-    ],
-  },
-};
-
-// Skips records that exist, so re-running can't duplicate them or overwrite later edits.
-async function seedOne(Model, filter, data, label) {
-  if (await Model.exists(filter)) {
-    console.log(`${label} already exists, skipped`);
-    return;
-  }
-  await Model.create(data);
-  console.log(`${label} created`);
-}
+const templates = [businessStarter, panchayatClassic, portfolioLight, localShop];
 
 try {
   await connectDB();
   // Wait for the unique indexes, otherwise the script may exit before they are built.
   await Promise.all([User.init(), Template.init(), Site.init()]);
 
-  await seedOne(User, { email: superAdmin.email, role: 'superadmin' }, superAdmin, 'Super admin');
-  await seedOne(Template, { slug: template.slug }, template, 'Template');
+  // Checks the role, not the email: the real admin changes that email and must not get a twin.
+  if (await User.exists({ role: 'superadmin' })) {
+    console.log('Super admin already exists, skipped');
+  } else {
+    await User.create(superAdmin);
+    console.log('Super admin created');
+  }
+
+  // Templates are defined in code, so they are updated here. Real sites keep their own copies.
+  for (const template of templates) {
+    await Template.findOneAndUpdate({ slug: template.slug }, template, {
+      upsert: true,
+      runValidators: true,
+    });
+    console.log(`Template "${template.slug}" saved`);
+  }
 
   // One public and one draft site, so both outcomes of site lookup can be tested.
-  const { _id: templateId } = await Template.findOne({ slug: template.slug });
+  // Their content is refreshed because they are test data, and their owners are left alone.
+  const { _id: templateId } = await Template.findOne({ slug: businessStarter.slug });
   const demoSites = [
     { name: 'Demo Site', subdomain: 'demo', status: 'published' },
     { name: 'Hidden Site', subdomain: 'hidden', status: 'draft' },
   ];
   for (const site of demoSites) {
-    await seedOne(
-      Site,
+    await Site.findOneAndUpdate(
       { subdomain: site.subdomain },
-      // structuredClone gives each site its own content, so edits can't affect another site.
-      { ...site, templateId, content: structuredClone(template.defaultContent) },
-      `Site "${site.subdomain}"`
+      {
+        $set: { templateId, content: structuredClone(businessStarter.defaultContent) },
+        $setOnInsert: { name: site.name, status: site.status },
+      },
+      { upsert: true, runValidators: true }
     );
+    console.log(`Site "${site.subdomain}" saved`);
   }
 } catch (err) {
   console.error('Seed failed:', err.message);

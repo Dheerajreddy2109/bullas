@@ -1,0 +1,36 @@
+.box {
+  padding: 14px;
+  background: #fff;
+  border-radius: 12px;
+}
+
+.title {
+  margin: 0 0 10px;
+  font-size: 18px;
+  color: var(--ink);
+}
+
+.post {
+  display: grid;
+  grid-template-columns: 76px 1fr;
+  gap: 10px;
+  align-items: center;
+  padding: 8px 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.image {
+  height: 56px;
+  border-radius: 6px;
+}
+
+.name {
+  margin: 0;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.date {
+  margin: 0;
+  font-size: 13px;
+}

@@ -1,0 +1,22 @@
+.page {
+  display: grid;
+  place-items: center;
+  min-height: 100svh;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.card {
+  width: 100%;
+  max-width: 400px;
+  padding: 28px;
+  box-sizing: border-box;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+
+.title {
+  margin: 0 0 20px;
+  font-size: 26px;
+}

@@ -2,6 +2,7 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import authRoutes from './routes/auth.js';
 import adminSiteRoutes from './routes/adminSites.js';
+import sitesRoutes from './routes/sites.js';
 import siteRoutes from './routes/site.js';
 import ownerRoutes from './routes/owner.js';
 
@@ -14,6 +15,7 @@ app.use(cookieParser());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminSiteRoutes);
+app.use('/api/sites', sitesRoutes);
 app.use('/api/site', siteRoutes);
 app.use('/api/owner', ownerRoutes);
 

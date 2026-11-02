@@ -1,6 +1,9 @@
+import bcrypt from 'bcryptjs';
 import mongoose from 'mongoose';
 import Site from '../../models/Site.js';
 import Template from '../../models/Template.js';
+import User from '../../models/User.js';
+import { passwordProblem } from '../utils/passwordRules.js';
 
 // Named fields rather than "everything except", so a private field added later stays hidden.
 // content is left out of lists because it can be large and a list page doesn't need it.
@@ -18,22 +21,42 @@ export async function listTemplates(req, res) {
   res.json(templates);
 }
 
+// Includes defaultContent, which the list leaves out, because a preview needs all of it.
+export async function getTemplate(req, res) {
+  const template = await Template.findOne({ slug: req.params.slug.toLowerCase(), isActive: true });
+  if (!template) {
+    return res.status(404).json({ error: 'Template not found' });
+  }
+
+  const { name, slug, description, defaultContent } = template;
+  res.json({ name, slug, description, defaultContent });
+}
+
 export async function listSites(req, res) {
-  const sites = await Site.find().select(SITE_SUMMARY).sort({ createdAt: -1 });
+  const sites = await Site.find()
+    .select(SITE_SUMMARY)
+    .populate('templateId', 'name slug')
+    .sort({ createdAt: -1 });
   res.json(sites);
 }
 
 export async function createSite(req, res) {
   // Only these fields are read, so a request can't set status or customDomain itself.
-  const { name, subdomain, templateSlug } = req.body ?? {};
+  const { name, subdomain, templateSlug, ownerName, ownerEmail, temporaryPassword } = req.body ?? {};
 
   // Strings only: an object like { $ne: null } would act as a database operator.
-  if (
-    typeof name !== 'string' ||
-    typeof subdomain !== 'string' ||
-    typeof templateSlug !== 'string'
-  ) {
-    return res.status(400).json({ error: 'name, subdomain and templateSlug are required' });
+  const fields = [name, subdomain, templateSlug, ownerName, ownerEmail, temporaryPassword];
+  if (fields.some((field) => typeof field !== 'string')) {
+    return res.status(400).json({ error: 'Please fill in every field' });
+  }
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(ownerEmail.trim())) {
+    return res.status(400).json({ error: 'That owner email does not look valid' });
+  }
+
+  const problem = passwordProblem(temporaryPassword);
+  if (problem) {
+    return res.status(400).json({ error: problem });
   }
 
   const template = await Template.findOne({
@@ -44,14 +67,41 @@ export async function createSite(req, res) {
     return res.status(400).json({ error: 'Template not found' });
   }
 
+  const passwordHash = await bcrypt.hash(temporaryPassword, 12);
+  // Made up front because the site and its owner each need to store the other's ID.
+  const siteId = new mongoose.Types.ObjectId();
+  const ownerId = new mongoose.Types.ObjectId();
+
   try {
-    const site = await Site.create({
-      name,
-      subdomain,
-      templateId: template._id,
-      content: structuredClone(template.defaultContent),
+    let site;
+    // Saves both or neither, so a failed owner can't leave a site nobody can log in to.
+    await mongoose.connection.transaction(async (session) => {
+      site = new Site({
+        _id: siteId,
+        name,
+        subdomain,
+        ownerId,
+        templateId: template._id,
+        content: structuredClone(template.defaultContent),
+      });
+      await site.save({ session });
+
+      const owner = new User({
+        _id: ownerId,
+        name: ownerName,
+        email: ownerEmail,
+        passwordHash,
+        role: 'siteowner',
+        siteId,
+        mustChangePassword: true,
+      });
+      await owner.save({ session });
     });
-    res.status(201).json(summarize(site));
+
+    res.status(201).json({
+      ...summarize(site),
+      owner: { name: ownerName.trim(), email: ownerEmail.trim().toLowerCase() },
+    });
   } catch (err) {
     // Relies on the unique index, because checking first would leave a gap for two requests.
     if (err.code === 11000) {

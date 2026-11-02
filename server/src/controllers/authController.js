@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import User from '../../models/User.js';
 import { AUTH_COOKIE, isAdminHost, signToken } from '../middleware/requireAuth.js';
 import { findSiteByHostname } from '../middleware/resolveSite.js';
+import { passwordProblem } from '../utils/passwordRules.js';
 
 const EIGHT_HOURS = 8 * 60 * 60 * 1000;
 
@@ -28,8 +29,8 @@ async function findAccount(req, email) {
   return User.findOne({ email, role: 'siteowner', siteId: site._id }).select('+passwordHash');
 }
 
-function publicUser({ name, email, role, siteId }) {
-  return { name, email, role, siteId };
+function publicUser({ name, email, role, siteId, mustChangePassword }) {
+  return { name, email, role, siteId, mustChangePassword };
 }
 
 export async function login(req, res) {
@@ -51,6 +52,33 @@ export async function login(req, res) {
   // TODO(2FA): when user.twoFactorEnabled is true, don't set the cookie yet. Ask for the
   // authenticator app's 6-digit code, verify it against the user's stored secret, then log in.
   res.cookie(AUTH_COOKIE, signToken(user), { ...cookieOptions, maxAge: EIGHT_HOURS });
+  res.json(publicUser(user));
+}
+
+export async function changePassword(req, res) {
+  const { currentPassword, newPassword } = req.body ?? {};
+
+  // Asks for the current password, so a browser left logged in can't be taken over.
+  if (typeof currentPassword !== 'string') {
+    return res.status(401).json({ error: 'Current password is wrong' });
+  }
+  const user = await User.findById(req.user._id).select('+passwordHash');
+  if (!(await bcrypt.compare(currentPassword, user.passwordHash))) {
+    return res.status(401).json({ error: 'Current password is wrong' });
+  }
+
+  const problem = passwordProblem(newPassword);
+  if (problem) {
+    return res.status(400).json({ error: problem });
+  }
+  // Otherwise the person who chose the temporary password would still know it.
+  if (newPassword === currentPassword) {
+    return res.status(400).json({ error: 'Choose a different password' });
+  }
+
+  user.passwordHash = await bcrypt.hash(newPassword, 12);
+  user.mustChangePassword = false;
+  await user.save();
   res.json(publicUser(user));
 }
 

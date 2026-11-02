@@ -81,13 +81,14 @@ try {
   const siteB = await makeSite('b');
 
   const passwordHash = await bcrypt.hash(PASSWORD, 12);
-  const makeUser = (key, role, siteId) =>
+  const makeUser = (key, role, siteId, extra = {}) =>
     User.create({
       name: `Test ${key}`,
       email: `${PREFIX}${key}${EMAIL_DOMAIN}`,
       passwordHash,
       role,
       siteId,
+      ...extra,
     });
   const ownerA = await makeUser('a', 'siteowner', siteA._id);
   await makeUser('b', 'siteowner', siteB._id);
@@ -129,15 +130,15 @@ try {
     (await api({ path: '/api/auth/me', host: HOST_A, cookie: `${tokenA}x` })).status === 401
   );
 
-  const ownerOnAdmin = await api({ path: '/api/admin/sites', host: ADMIN_HOST, cookie: tokenA });
+  const ownerOnAdmin = await api({ path: '/api/sites', host: ADMIN_HOST, cookie: tokenA });
   check('an owner calling a super admin route gets 403', ownerOnAdmin.status === 403);
   check(
     'the super admin area stays hidden on a site',
-    (await api({ path: '/api/admin/sites', host: HOST_A, cookie: tokenA })).status === 404
+    (await api({ path: '/api/sites', host: HOST_A, cookie: tokenA })).status === 404
   );
   check(
     'a super admin can use a super admin route',
-    (await api({ path: '/api/admin/sites', host: ADMIN_HOST, cookie: tokenAdmin })).status === 200
+    (await api({ path: '/api/sites', host: ADMIN_HOST, cookie: tokenAdmin })).status === 200
   );
 
   check(
@@ -163,6 +164,56 @@ try {
     ownSite.status === 200 && ownSite.json?.status === 'draft' && ownSite.json?.content?.owner === 'a'
   );
   check('the same draft stays hidden from the public', (await api({ path: '/api/site', host: HOST_A })).status === 404);
+
+  const tempOwner = await makeUser('temp', 'siteowner', siteA._id, { mustChangePassword: true });
+  const tempToken = tokenFrom(await login(HOST_A, tempOwner.email));
+  const change = (body) =>
+    api({ method: 'POST', path: '/api/auth/change-password', host: HOST_A, cookie: tempToken, body });
+  const NEW_PASSWORD = randomBytes(16).toString('hex');
+
+  check('a temporary password can still log in', Boolean(tempToken));
+  const tempMe = await api({ path: '/api/auth/me', host: HOST_A, cookie: tempToken });
+  check('/me works and reports the change is needed', tempMe.json?.mustChangePassword === true);
+  const blocked = await api({ path: '/api/owner/site', host: HOST_A, cookie: tempToken });
+  check(
+    'other routes get 403 until the password changes',
+    blocked.status === 403 && blocked.json?.code === 'PASSWORD_CHANGE_REQUIRED'
+  );
+  check(
+    'changing the password without logging in gets 401',
+    (
+      await api({
+        method: 'POST',
+        path: '/api/auth/change-password',
+        host: HOST_A,
+        body: { currentPassword: PASSWORD, newPassword: NEW_PASSWORD },
+      })
+    ).status === 401
+  );
+  check(
+    'a wrong current password gets 401',
+    (await change({ currentPassword: 'wrong', newPassword: NEW_PASSWORD })).status === 401
+  );
+  check(
+    'a short new password gets 400',
+    (await change({ currentPassword: PASSWORD, newPassword: 'short' })).status === 400
+  );
+  check(
+    'reusing the temporary password gets 400',
+    (await change({ currentPassword: PASSWORD, newPassword: PASSWORD })).status === 400
+  );
+  const changed = await change({ currentPassword: PASSWORD, newPassword: NEW_PASSWORD });
+  check('a valid change succeeds', changed.status === 200 && changed.json?.mustChangePassword === false);
+  check(
+    'the owner route works after the change',
+    (await api({ path: '/api/owner/site', host: HOST_A, cookie: tempToken })).status === 200
+  );
+  const storedTemp = await User.findById(tempOwner._id).select('+passwordHash');
+  check(
+    'the new password replaces the old one',
+    (await bcrypt.compare(NEW_PASSWORD, storedTemp.passwordHash)) &&
+      !(await bcrypt.compare(PASSWORD, storedTemp.passwordHash))
+  );
 
   const logout = await api({ method: 'POST', path: '/api/auth/logout', host: HOST_A, body: {} });
   check('logout clears the cookie', logout.status === 200 && /Expires=Thu, 01 Jan 1970/i.test(logout.setCookie));

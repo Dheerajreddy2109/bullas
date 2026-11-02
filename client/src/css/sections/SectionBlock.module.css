@@ -1,0 +1,56 @@
+.block {
+  padding: 18px;
+  border-radius: 14px;
+  /* The sticky preview bar would otherwise cover a section's heading. */
+  scroll-margin-top: 56px;
+}
+
+.heading {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin: 0 0 14px;
+  font-size: clamp(20px, 3vw, 28px);
+  line-height: 1.25;
+  color: var(--ink);
+}
+
+.number {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  font-weight: 800;
+  color: #fff;
+  background: #d81e2c;
+  border-radius: 50%;
+}
+
+.plain {
+  padding-inline: 0;
+}
+
+.cream {
+  background: #fff7e6;
+}
+
+.blue {
+  background: #e6f1fb;
+}
+
+.peach {
+  background: #ffeee4;
+}
+
+.pink {
+  background: #fdeaf1;
+}
+
+.green {
+  background: #e9f7ea;
+}
+
+.violet {
+  background: #f1ecfc;
+}

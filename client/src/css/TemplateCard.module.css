@@ -1,0 +1,55 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+
+.thumbnail {
+  position: relative;
+  height: 220px;
+  overflow: hidden;
+  background: #eef0f3;
+}
+
+/* Drawn at 4x and shrunk to 1/4, so it fills any card width and shows the desktop layout. */
+.frame {
+  width: 400%;
+  height: 400%;
+  border: 0;
+  transform: scale(0.25);
+  transform-origin: top left;
+  pointer-events: none;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-grow: 1;
+  padding: 16px;
+}
+
+.name {
+  margin: 0;
+  font-size: 18px;
+  color: var(--text-heading);
+}
+
+.description {
+  flex-grow: 1;
+  margin: 0;
+  font-size: 14px;
+}
+
+.button {
+  align-self: flex-start;
+  padding: 7px 14px;
+  font-weight: 600;
+  color: #fff;
+  text-decoration: none;
+  background: #0b6b3a;
+  border-radius: 8px;
+}
