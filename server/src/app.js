@@ -1,7 +1,8 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
-import { resolveSite, requireSite } from './middleware/resolveSite.js';
 import authRoutes from './routes/auth.js';
+import adminSiteRoutes from './routes/adminSites.js';
+import siteRoutes from './routes/site.js';
 
 const app = express();
 
@@ -11,22 +12,13 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use('/api/auth', authRoutes);
+app.use('/api/admin', adminSiteRoutes);
+app.use('/api/site', siteRoutes);
 
 // Lets us (and later AWS monitoring) check the server is alive without touching site data.
 // The /api prefix stops data routes clashing with website pages like /blog.
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });
-});
-
-app.get('/api/site', resolveSite, requireSite, (req, res) => {
-  // Same response as an unknown site, so visitors can't discover unpublished sites.
-  if (req.site.status !== 'published') {
-    return res.status(404).json({ error: 'Site not found' });
-  }
-
-  // An explicit list, so private fields added to Site later can't leak by default.
-  const { name, subdomain, content } = req.site;
-  res.json({ name, subdomain, content });
 });
 
 export default app;
