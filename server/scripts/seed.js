@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import { connectDB } from '../src/db.js';
 import User from '../models/User.js';
 import Template from '../models/Template.js';
+import Site from '../models/Site.js';
 
 const superAdmin = {
   name: 'Super Admin',
@@ -57,10 +58,26 @@ async function seedOne(Model, filter, data, label) {
 try {
   await connectDB();
   // Wait for the unique indexes, otherwise the script may exit before they are built.
-  await Promise.all([User.init(), Template.init()]);
+  await Promise.all([User.init(), Template.init(), Site.init()]);
 
   await seedOne(User, { email: superAdmin.email, role: 'superadmin' }, superAdmin, 'Super admin');
   await seedOne(Template, { slug: template.slug }, template, 'Template');
+
+  // One public and one draft site, so both outcomes of site lookup can be tested.
+  const { _id: templateId } = await Template.findOne({ slug: template.slug });
+  const demoSites = [
+    { name: 'Demo Site', subdomain: 'demo', status: 'published' },
+    { name: 'Hidden Site', subdomain: 'hidden', status: 'draft' },
+  ];
+  for (const site of demoSites) {
+    await seedOne(
+      Site,
+      { subdomain: site.subdomain },
+      // structuredClone gives each site its own content, so edits can't affect another site.
+      { ...site, templateId, content: structuredClone(template.defaultContent) },
+      `Site "${site.subdomain}"`
+    );
+  }
 } catch (err) {
   console.error('Seed failed:', err.message);
   process.exitCode = 1;
