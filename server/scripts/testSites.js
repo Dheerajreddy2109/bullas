@@ -2,7 +2,7 @@ import http from 'node:http';
 import mongoose from 'mongoose';
 import app from '../src/app.js';
 import { connectDB } from '../src/db.js';
-import { AUTH_COOKIE, signSuperAdminToken } from '../src/middleware/requireSuperAdmin.js';
+import { AUTH_COOKIE, signToken } from '../src/middleware/requireAuth.js';
 import User from '../models/User.js';
 import Site from '../models/Site.js';
 import Template from '../models/Template.js';
@@ -73,7 +73,7 @@ try {
   await new Promise((resolve) => server.once('listening', resolve));
   const { port } = server.address();
 
-  const cookie = `${AUTH_COOKIE}=${signSuperAdminToken(admin)}`;
+  const cookie = `${AUTH_COOKIE}=${signToken(admin)}`;
   const api = (options) => request(port, { cookie, ...options });
   const create = (fields) =>
     api({

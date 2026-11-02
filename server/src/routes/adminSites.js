@@ -5,13 +5,13 @@ import {
   listTemplates,
   updateSiteStatus,
 } from '../controllers/adminSiteController.js';
-import { requireSuperAdmin } from '../middleware/requireSuperAdmin.js';
+import { requireAdminHost, requireAuth, requireRole } from '../middleware/requireAuth.js';
 import { requireJson } from '../middleware/requireJson.js';
 
 const router = Router();
 
 // On the router, so a route added here later can't forget the login check.
-router.use(requireSuperAdmin);
+router.use(requireAdminHost, requireAuth, requireRole('superadmin'));
 
 router.get('/templates', listTemplates);
 router.get('/sites', listSites);
