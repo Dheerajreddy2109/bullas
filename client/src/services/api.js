@@ -34,3 +34,18 @@ export const getSites = () => request('/api/sites')
 export const createSite = (site) => sendJson('POST', '/api/sites', site)
 export const updateSiteStatus = (id, status) =>
   sendJson('PATCH', `/api/sites/${encodeURIComponent(id)}/status`, { status })
+
+export const getSiteContent = (id) => request(`/api/sites/${encodeURIComponent(id)}/content`)
+export const saveSiteContent = (id, content) =>
+  sendJson('PUT', `/api/sites/${encodeURIComponent(id)}/content`, { content })
+
+export function uploadSiteImage(id, file) {
+  const body = new FormData()
+  body.append('image', file)
+  return request(`/api/sites/${encodeURIComponent(id)}/upload`, {
+    method: 'POST',
+    // The server requires this header, because other sites' pages can't send it.
+    headers: { 'X-Bullas-Upload': '1' },
+    body,
+  })
+}

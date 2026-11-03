@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import styles from '../css/SitesTable.module.css'
 
 const formatDate = (value) => new Date(value).toLocaleDateString()
@@ -27,7 +28,10 @@ function SitesTable({ sites, busyId, onToggleStatus }) {
                 <span className={`${styles.status} ${styles[site.status]}`}>{site.status}</span>
               </td>
               <td>{formatDate(site.createdAt)}</td>
-              <td>
+              <td className={styles.actions}>
+                <Link className={styles.button} to={`/sites/${site._id}/edit`}>
+                  Edit
+                </Link>
                 <button
                   className={styles.button}
                   type="button"

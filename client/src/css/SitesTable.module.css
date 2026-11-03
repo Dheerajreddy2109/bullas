@@ -45,10 +45,17 @@
   background: #dcfce7;
 }
 
+.table td.actions {
+  display: flex;
+  gap: 8px;
+}
+
 .button {
   padding: 5px 12px;
   font: inherit;
   font-size: 14px;
+  color: inherit;
+  text-decoration: none;
   background: transparent;
   border: 1px solid var(--border);
   border-radius: 8px;

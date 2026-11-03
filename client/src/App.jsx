@@ -6,6 +6,7 @@ import CreateSitePage from './pages/CreateSitePage.jsx'
 import DashboardPage from './pages/DashboardPage.jsx'
 import HomePage from './pages/HomePage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
+import SiteEditorPage from './pages/SiteEditorPage.jsx'
 import SitesPage from './pages/SitesPage.jsx'
 import TemplatePreviewPage from './pages/TemplatePreviewPage.jsx'
 import TemplatesPage from './pages/TemplatesPage.jsx'
@@ -27,6 +28,7 @@ function App() {
               <Route path="/templates" element={<TemplatesPage />} />
               <Route path="/sites" element={<SitesPage />} />
               <Route path="/sites/new" element={<CreateSitePage />} />
+              <Route path="/sites/:id/edit" element={<SiteEditorPage />} />
             </Route>
             <Route path="/templates/:slug/preview" element={<TemplatePreviewPage />} />
           </Route>

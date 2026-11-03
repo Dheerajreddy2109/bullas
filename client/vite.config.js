@@ -10,6 +10,7 @@ export default defineConfig({
       // Must be the object form: a plain string makes Vite turn changeOrigin on, which
       // replaces the Host the server needs to work out which site a request is for.
       '/api': { target: 'http://localhost:4000', changeOrigin: false },
+      '/uploads': { target: 'http://localhost:4000', changeOrigin: false },
     },
   },
 })

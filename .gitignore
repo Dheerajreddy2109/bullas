@@ -1,6 +1,9 @@
 # Reinstallable with npm install, and far too large to commit.
 node_modules/
 
+# Customers' images are their data, not source code, and can grow very large.
+server/uploads/
+
 # Will hold database passwords and login secrets; must never reach git history.
 .env
 

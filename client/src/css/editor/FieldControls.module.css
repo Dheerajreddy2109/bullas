@@ -1,0 +1,27 @@
+/* Shared because text, textarea and colour fields are the same control in different forms. */
+.label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 14px;
+  color: var(--text-heading);
+}
+
+.input {
+  width: 100%;
+  padding: 8px 10px;
+  box-sizing: border-box;
+  font: inherit;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.color {
+  width: 64px;
+  height: 36px;
+  padding: 2px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+}

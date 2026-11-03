@@ -1,0 +1,19 @@
+.section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.summary {
+  padding: 12px 14px;
+  font-weight: 600;
+  color: var(--text-heading);
+  cursor: pointer;
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 2px 14px 14px;
+}

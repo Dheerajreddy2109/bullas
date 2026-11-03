@@ -1,0 +1,57 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.title {
+  color: var(--text-heading);
+}
+
+.thumbnail {
+  width: 120px;
+  height: 80px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.button {
+  padding: 6px 12px;
+  font: inherit;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* Hidden visually but still focusable, so keyboard users can open the file picker. */
+.file {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.button:focus-within {
+  outline: 2px solid #0b6b3a;
+}
+
+.hint {
+  font-size: 12px;
+}
+
+.error {
+  margin: 0;
+  padding: 6px 10px;
+  color: #991b1b;
+  background: #fee2e2;
+  border-radius: 8px;
+}
