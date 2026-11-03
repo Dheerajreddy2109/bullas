@@ -1,0 +1,21 @@
+.page {
+  display: grid;
+  place-items: center;
+  min-height: 100svh;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.card {
+  max-width: 420px;
+  text-align: center;
+}
+
+.title {
+  margin: 0 0 8px;
+  font-size: 30px;
+}
+
+.message {
+  margin: 0;
+}

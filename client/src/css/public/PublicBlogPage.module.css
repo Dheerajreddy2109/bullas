@@ -1,0 +1,5 @@
+.heading {
+  margin: 0 0 16px;
+  font-size: clamp(24px, 4vw, 32px);
+  color: var(--ink);
+}

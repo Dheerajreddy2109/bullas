@@ -1,0 +1,22 @@
+.back {
+  font-size: 14px;
+  color: inherit;
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin: 8px 0 18px;
+}
+
+.title {
+  margin: 0;
+  font-size: 28px;
+}
+
+.saved {
+  font-size: 14px;
+  color: #166534;
+}

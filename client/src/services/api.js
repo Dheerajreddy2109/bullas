@@ -23,6 +23,11 @@ function sendJson(method, path, body = {}) {
 
 export const getServerHealth = () => request('/api/health')
 
+// Public site calls: the server works out which site from the address, so no ID is sent.
+export const getPublicSite = () => request('/api/site')
+export const getPublicBlog = (page = 1) => request(`/api/site/blog?page=${page}`)
+export const getPublicPost = (slug) => request(`/api/site/blog/${encodeURIComponent(slug)}`)
+
 export const login = (email, password) => sendJson('POST', '/api/auth/login', { email, password })
 export const logout = () => sendJson('POST', '/api/auth/logout')
 export const getCurrentUser = () => request('/api/auth/me')
@@ -38,6 +43,18 @@ export const updateSiteStatus = (id, status) =>
 export const getSiteContent = (id) => request(`/api/sites/${encodeURIComponent(id)}/content`)
 export const saveSiteContent = (id, content) =>
   sendJson('PUT', `/api/sites/${encodeURIComponent(id)}/content`, { content })
+
+const blogPath = (siteId, postId = '') =>
+  `/api/sites/${encodeURIComponent(siteId)}/blog${postId ? `/${encodeURIComponent(postId)}` : ''}`
+
+export const listBlogPosts = (siteId, { page = 1, status } = {}) =>
+  request(`${blogPath(siteId)}?page=${page}${status ? `&status=${status}` : ''}`)
+export const getBlogPost = (siteId, postId) => request(blogPath(siteId, postId))
+export const createBlogPost = (siteId, post) => sendJson('POST', blogPath(siteId), post)
+export const updateBlogPost = (siteId, postId, post) => sendJson('PUT', blogPath(siteId, postId), post)
+export const setBlogPostStatus = (siteId, postId, status) =>
+  sendJson('PATCH', `${blogPath(siteId, postId)}/status`, { status })
+export const deleteBlogPost = (siteId, postId) => request(blogPath(siteId, postId), { method: 'DELETE' })
 
 export function uploadSiteImage(id, file) {
   const body = new FormData()

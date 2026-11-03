@@ -27,5 +27,6 @@ export function scoped(Model, siteId) {
       return Model.updateOne({ ...filter, siteId }, update, { runValidators: true });
     },
     deleteOne: (filter) => Model.deleteOne({ ...filter, siteId }),
+    countDocuments: (filter = {}) => Model.countDocuments({ ...filter, siteId }),
   };
 }

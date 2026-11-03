@@ -4,6 +4,7 @@ import authRoutes from './routes/auth.js';
 import adminSiteRoutes from './routes/adminSites.js';
 import sitesRoutes from './routes/sites.js';
 import siteContentRoutes from './routes/siteContent.js';
+import blogRoutes from './routes/blog.js';
 import siteRoutes from './routes/site.js';
 import ownerRoutes from './routes/owner.js';
 import { UPLOAD_ROOT } from './services/imageStorage.js';
@@ -32,6 +33,7 @@ app.use(
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminSiteRoutes);
 // Before sitesRoutes, whose router-wide super admin check would otherwise refuse site owners.
+app.use('/api/sites/:id/blog', blogRoutes);
 app.use('/api/sites/:id', siteContentRoutes);
 app.use('/api/sites', sitesRoutes);
 app.use('/api/site', siteRoutes);

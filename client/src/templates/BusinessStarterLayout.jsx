@@ -8,7 +8,8 @@ import SiteHeader from '../components/sections/SiteHeader.jsx'
 import { readContent, safeColor } from './contentHelpers.js'
 import styles from '../css/BusinessStarterLayout.module.css'
 
-function BusinessStarterLayout({ content }) {
+// extraMenu lets the live site add links, like Blog, that aren't part of the saved content.
+function BusinessStarterLayout({ content, extraMenu = [] }) {
   const c = readContent(content)
   const brand = safeColor(c.branding?.brandColor, '#1d4ed8')
 
@@ -20,7 +21,7 @@ function BusinessStarterLayout({ content }) {
         title={c.hero?.title}
         subtitle={c.hero?.subtitle}
         image={c.hero?.image}
-        menu={c.menu?.items}
+        menu={[...(c.menu?.items ?? []), ...extraMenu]}
       />
       <main className={styles.sections}>
         <SectionBlock id="services" title={c.services?.title}>
@@ -37,7 +38,7 @@ function BusinessStarterLayout({ content }) {
           <ContactBlock address={c.contact?.address} phone={c.contact?.phone} email={c.contact?.email} />
         </SectionBlock>
       </main>
-      <SiteFooter title={c.footer?.text} menu={c.menu?.items} />
+      <SiteFooter title={c.footer?.text} menu={[...(c.menu?.items ?? []), ...extraMenu]} />
     </div>
   )
 }

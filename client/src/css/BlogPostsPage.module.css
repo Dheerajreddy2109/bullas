@@ -1,0 +1,48 @@
+.back {
+  font-size: 14px;
+  color: inherit;
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  margin: 8px 0 18px;
+}
+
+.title {
+  margin: 0;
+  font-size: 28px;
+}
+
+.links {
+  display: flex;
+  gap: 8px;
+}
+
+.primary,
+.secondary {
+  padding: 8px 16px;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 8px;
+}
+
+.primary {
+  color: #fff;
+  background: #0b6b3a;
+}
+
+.secondary {
+  color: inherit;
+  border: 1px solid var(--border);
+}
+
+.error {
+  padding: 10px 12px;
+  color: #991b1b;
+  background: #fee2e2;
+  border-radius: 8px;
+}

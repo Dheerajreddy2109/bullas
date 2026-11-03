@@ -64,6 +64,12 @@ function SiteEditorPage() {
         <div className={styles.saveArea}>
           {dirty && <span className={styles.unsaved}>Unsaved changes</span>}
           {saved && <span className={styles.saved}>Saved</span>}
+          {/* Hidden while there are unsaved edits, because the preview shows saved content only. */}
+          {!dirty && (
+            <Link className={styles.previewLink} to={`/sites/${id}/preview`}>
+              Preview site
+            </Link>
+          )}
           <button className={styles.save} type="button" disabled={saving || !dirty} onClick={handleSave}>
             {saving ? 'Saving...' : 'Save'}
           </button>

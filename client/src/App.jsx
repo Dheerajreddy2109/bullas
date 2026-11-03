@@ -1,42 +1,18 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import DashboardLayout from './components/DashboardLayout.jsx'
-import ProtectedRoute from './components/ProtectedRoute.jsx'
-import AuthProvider from './context/AuthProvider.jsx'
-import CreateSitePage from './pages/CreateSitePage.jsx'
-import DashboardPage from './pages/DashboardPage.jsx'
+import AdminApp from './apps/AdminApp.jsx'
+import SiteApp from './apps/SiteApp.jsx'
 import HomePage from './pages/HomePage.jsx'
-import LoginPage from './pages/LoginPage.jsx'
-import SiteEditorPage from './pages/SiteEditorPage.jsx'
-import SitesPage from './pages/SitesPage.jsx'
-import TemplatePreviewPage from './pages/TemplatePreviewPage.jsx'
-import TemplatesPage from './pages/TemplatesPage.jsx'
 
-// The server only allows super admin login on this address, so the screens live here too.
-const isAdminApp = window.location.hostname.startsWith('admin.')
+// The address decides which app loads, the same way the server decides which site it serves.
+// Set VITE_ROOT_DOMAIN to bullas.in when building for the live server.
+const ROOT_DOMAIN = (import.meta.env.VITE_ROOT_DOMAIN ?? 'localhost').toLowerCase()
+const hostname = window.location.hostname.toLowerCase()
 
 function App() {
-  if (!isAdminApp) return <HomePage />
-
-  return (
-    <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route element={<ProtectedRoute />}>
-            <Route element={<DashboardLayout />}>
-              <Route index element={<DashboardPage />} />
-              <Route path="/templates" element={<TemplatesPage />} />
-              <Route path="/sites" element={<SitesPage />} />
-              <Route path="/sites/new" element={<CreateSitePage />} />
-              <Route path="/sites/:id/edit" element={<SiteEditorPage />} />
-            </Route>
-            <Route path="/templates/:slug/preview" element={<TemplatePreviewPage />} />
-          </Route>
-          <Route path="*" element={<p>Page not found.</p>} />
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
-  )
+  if (hostname === `admin.${ROOT_DOMAIN}`) return <AdminApp />
+  if (hostname === ROOT_DOMAIN || hostname === `www.${ROOT_DOMAIN}` || hostname === '127.0.0.1') {
+    return <HomePage />
+  }
+  return <SiteApp />
 }
 
 export default App

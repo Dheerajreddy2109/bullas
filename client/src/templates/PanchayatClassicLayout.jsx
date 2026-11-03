@@ -14,7 +14,8 @@ import styles from '../css/PanchayatClassicLayout.module.css'
 
 const PHOTO = 'ఫోటో'
 
-function PanchayatClassicLayout({ content }) {
+// extraMenu lets the live site add links, like Blog, that aren't part of the saved content.
+function PanchayatClassicLayout({ content, extraMenu = [] }) {
   const c = readContent(content)
   const brand = safeColor(c.branding?.brandColor, '#0b6b3a')
 
@@ -28,7 +29,7 @@ function PanchayatClassicLayout({ content }) {
         subtitle={c.village?.englishName && `(${c.village.englishName})`}
         location={c.village?.location}
         tagline={c.village?.tagline}
-        menu={c.menu?.items}
+        menu={[...(c.menu?.items ?? []), ...extraMenu]}
       />
       <main className={styles.sections}>
         <SectionBlock id="members" number={1} title={c.members?.title} tone="cream">
@@ -129,7 +130,7 @@ function PanchayatClassicLayout({ content }) {
           <ContactBlock address={c.contact?.address} phone={c.contact?.phone} email={c.contact?.email} />
         </SectionBlock>
       </main>
-      <SiteFooter title={c.village?.name} text={c.footer?.text} menu={c.menu?.items} />
+      <SiteFooter title={c.village?.name} text={c.footer?.text} menu={[...(c.menu?.items ?? []), ...extraMenu]} />
     </div>
   )
 }

@@ -10,7 +10,8 @@ function checkString(value, label, max) {
   return value;
 }
 
-function checkImage(value, label, siteId) {
+// Exported because blog post images follow the same rule.
+export function checkImage(value, label, siteId) {
   const image = checkString(value, label, MAX_TEXT);
   // Only this site's uploads: an outside URL could track visitors, and another site's is not theirs.
   const ownUpload = new RegExp(`^/uploads/${siteId}/[a-f0-9]{32}\\.(jpg|png|webp)$`);

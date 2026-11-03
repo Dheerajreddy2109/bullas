@@ -32,6 +32,12 @@ function SitesTable({ sites, busyId, onToggleStatus }) {
                 <Link className={styles.button} to={`/sites/${site._id}/edit`}>
                   Edit
                 </Link>
+                <Link className={styles.button} to={`/sites/${site._id}/blog`}>
+                  Blog
+                </Link>
+                <Link className={styles.button} to={`/sites/${site._id}/preview`}>
+                  Preview
+                </Link>
                 <button
                   className={styles.button}
                   type="button"
