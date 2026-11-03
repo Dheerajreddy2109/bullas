@@ -1,0 +1,16 @@
+.page {
+  display: grid;
+  place-items: center;
+  gap: 12px;
+  min-height: 100svh;
+  align-content: center;
+}
+
+.button {
+  padding: 8px 18px;
+  font: inherit;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+}

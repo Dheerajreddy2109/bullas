@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { createSite, getTemplates } from '../services/api.js'
+import { generatePassword } from '../utils/generatePassword.js'
 import styles from '../css/CreateSiteForm.module.css'
 
 const EMPTY_FORM = {
@@ -9,13 +10,6 @@ const EMPTY_FORM = {
   ownerName: '',
   ownerEmail: '',
   temporaryPassword: '',
-}
-
-// Uses the browser's secure random source, because Math.random can be predicted.
-function generatePassword() {
-  const letters = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789'
-  const values = crypto.getRandomValues(new Uint32Array(16))
-  return Array.from(values, (value) => letters[value % letters.length]).join('')
 }
 
 // A quick check for friendly feedback only; the server always checks again.

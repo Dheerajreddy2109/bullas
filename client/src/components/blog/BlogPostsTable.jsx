@@ -4,7 +4,7 @@ import styles from '../../css/blog/BlogPostsTable.module.css'
 
 const formatDate = (value) => (value ? new Date(value).toLocaleDateString() : '-')
 
-function BlogPostsTable({ siteId, posts, busyId, onToggleStatus, onDelete }) {
+function BlogPostsTable({ editBase, posts, busyId, onToggleStatus, onDelete }) {
   // An in-page confirm rather than a browser pop-up, which can't be styled or tested easily.
   const [confirmId, setConfirmId] = useState(null)
 
@@ -31,7 +31,7 @@ function BlogPostsTable({ siteId, posts, busyId, onToggleStatus, onDelete }) {
               </td>
               <td>{formatDate(post.publishedAt)}</td>
               <td className={styles.actions}>
-                <Link className={styles.button} to={`/sites/${siteId}/blog/${post._id}/edit`}>
+                <Link className={styles.button} to={`${editBase}/${post._id}/edit`}>
                   Edit
                 </Link>
                 <button

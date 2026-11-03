@@ -25,6 +25,10 @@ const userSchema = new mongoose.Schema(
     twoFactorEnabled: { type: Boolean, default: false },
     // Set when someone else chose the password, so it stops being known to two people.
     mustChangePassword: { type: Boolean, default: false },
+    // Lets the super admin lock an owner out without deleting their account or site.
+    disabled: { type: Boolean, default: false },
+    // Copied into every login token; raising it ends all existing logins at once.
+    sessionVersion: { type: Number, default: 0 },
   },
   { timestamps: true }
 );

@@ -36,6 +36,7 @@ export async function listSites(req, res) {
   const sites = await Site.find()
     .select(SITE_SUMMARY)
     .populate('templateId', 'name slug')
+    .populate('ownerId', 'name email disabled mustChangePassword')
     .sort({ createdAt: -1 });
   res.json(sites);
 }

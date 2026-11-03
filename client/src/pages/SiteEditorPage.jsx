@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import ContentEditor from '../components/editor/ContentEditor.jsx'
+import ScopeLink from '../components/ScopeLink.jsx'
+import { useSiteScope } from '../hooks/useSiteScope.js'
 import { getSiteContent, saveSiteContent } from '../services/api.js'
 import { templateLayouts } from '../templates/registry.js'
 import styles from '../css/SiteEditorPage.module.css'
 
 function SiteEditorPage() {
-  const { id } = useParams()
+  const scope = useSiteScope()
+  const id = scope.siteId
   const [site, setSite] = useState(null)
   const [content, setContent] = useState(null)
   const [loadError, setLoadError] = useState('')
@@ -56,8 +59,8 @@ function SiteEditorPage() {
     <>
       <div className={styles.header}>
         <div>
-          <Link className={styles.back} to="/sites">
-            Back to sites
+          <Link className={styles.back} to={scope.backHref}>
+            {scope.backLabel}
           </Link>
           <h1 className={styles.title}>Edit {site.name}</h1>
         </div>
@@ -66,9 +69,9 @@ function SiteEditorPage() {
           {saved && <span className={styles.saved}>Saved</span>}
           {/* Hidden while there are unsaved edits, because the preview shows saved content only. */}
           {!dirty && (
-            <Link className={styles.previewLink} to={`/sites/${id}/preview`}>
+            <ScopeLink className={styles.previewLink} to={scope.previewHref} external={scope.previewIsExternal}>
               Preview site
-            </Link>
+            </ScopeLink>
           )}
           <button className={styles.save} type="button" disabled={saving || !dirty} onClick={handleSave}>
             {saving ? 'Saving...' : 'Save'}

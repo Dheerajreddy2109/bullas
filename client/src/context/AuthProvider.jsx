@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { AuthContext } from './AuthContext.js'
-import { getCurrentUser, login, logout } from '../services/api.js'
+import { changePassword, getCurrentUser, login, logout } from '../services/api.js'
 
 function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
@@ -23,6 +23,8 @@ function AuthProvider({ children }) {
         await logout()
         setUser(null)
       },
+      changePassword: async (currentPassword, newPassword) =>
+        setUser(await changePassword(currentPassword, newPassword)),
     }),
     [user, loading],
   )

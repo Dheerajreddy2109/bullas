@@ -3,17 +3,17 @@ import LoginForm from '../components/LoginForm.jsx'
 import { useAuth } from '../hooks/useAuth.js'
 import styles from '../css/LoginPage.module.css'
 
-function LoginPage() {
+function LoginPage({ title = 'Bullas Super Admin', homePath = '/' }) {
   const { user, loading } = useAuth()
   const location = useLocation()
 
   if (loading) return null
-  if (user) return <Navigate to={location.state?.from ?? '/'} replace />
+  if (user) return <Navigate to={location.state?.from ?? homePath} replace />
 
   return (
     <main className={styles.page}>
       <div className={styles.card}>
-        <h1 className={styles.title}>Bullas Super Admin</h1>
+        <h1 className={styles.title}>{title}</h1>
         <LoginForm />
       </div>
     </main>

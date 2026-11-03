@@ -31,6 +31,14 @@ export const getPublicPost = (slug) => request(`/api/site/blog/${encodeURICompon
 export const login = (email, password) => sendJson('POST', '/api/auth/login', { email, password })
 export const logout = () => sendJson('POST', '/api/auth/logout')
 export const getCurrentUser = () => request('/api/auth/me')
+export const changePassword = (currentPassword, newPassword) =>
+  sendJson('POST', '/api/auth/change-password', { currentPassword, newPassword })
+
+export const getSiteOwner = (siteId) => request(`/api/sites/${encodeURIComponent(siteId)}/owner`)
+export const resetOwnerPassword = (siteId, temporaryPassword) =>
+  sendJson('POST', `/api/sites/${encodeURIComponent(siteId)}/owner/reset-password`, { temporaryPassword })
+export const setOwnerDisabled = (siteId, disabled) =>
+  sendJson('PATCH', `/api/sites/${encodeURIComponent(siteId)}/owner/status`, { disabled })
 
 export const getTemplates = () => request('/api/admin/templates')
 export const getTemplate = (slug) => request(`/api/admin/templates/${encodeURIComponent(slug)}`)

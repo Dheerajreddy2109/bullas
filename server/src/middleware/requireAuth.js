@@ -15,7 +15,7 @@ if (!JWT_SECRET || JWT_SECRET.length < 32) {
 }
 
 export function signToken(user) {
-  return jwt.sign({ role: user.role }, JWT_SECRET, {
+  return jwt.sign({ role: user.role, sv: user.sessionVersion ?? 0 }, JWT_SECRET, {
     subject: user._id.toString(),
     audience: AUDIENCE,
     algorithm: 'HS256',
@@ -51,8 +51,12 @@ export async function requireLogin(req, res, next) {
 
   // Loaded every time, so a removed account or changed role applies before the token expires.
   const user = await User.findById(payload.sub);
-  if (!user) {
+  // A token from before a password change, reset or disable no longer matches, so it stops working.
+  if (!user || (payload.sv ?? 0) !== (user.sessionVersion ?? 0)) {
     return res.status(401).json({ error: 'Not logged in' });
+  }
+  if (user.disabled) {
+    return res.status(403).json({ error: 'This account is disabled', code: 'ACCOUNT_DISABLED' });
   }
 
   // A valid token only works at its own address, so one owner can't reach another site.

@@ -49,10 +49,19 @@ export async function login(req, res) {
     return res.status(401).json({ error: 'Wrong email or password' });
   }
 
+  // Checked only after the password matches, so this can't be used to find out who is disabled.
+  if (user.disabled) {
+    return res.status(403).json({ error: 'This account is disabled. Contact the Bullas administrator.' });
+  }
+
   // TODO(2FA): when user.twoFactorEnabled is true, don't set the cookie yet. Ask for the
   // authenticator app's 6-digit code, verify it against the user's stored secret, then log in.
-  res.cookie(AUTH_COOKIE, signToken(user), { ...cookieOptions, maxAge: EIGHT_HOURS });
+  setLoginCookie(res, user);
   res.json(publicUser(user));
+}
+
+function setLoginCookie(res, user) {
+  res.cookie(AUTH_COOKIE, signToken(user), { ...cookieOptions, maxAge: EIGHT_HOURS });
 }
 
 export async function changePassword(req, res) {
@@ -78,7 +87,11 @@ export async function changePassword(req, res) {
 
   user.passwordHash = await bcrypt.hash(newPassword, 12);
   user.mustChangePassword = false;
+  // Ends every other login, such as a browser someone else used with the old password.
+  user.sessionVersion = (user.sessionVersion ?? 0) + 1;
   await user.save();
+  // A fresh cookie, so the person who just changed it stays logged in here.
+  setLoginCookie(res, user);
   res.json(publicUser(user));
 }
 

@@ -13,6 +13,7 @@ function SitesTable({ sites, busyId, onToggleStatus }) {
             <th>Name</th>
             <th>Subdomain</th>
             <th>Template</th>
+            <th>Owner</th>
             <th>Status</th>
             <th>Created</th>
             <th>Action</th>
@@ -24,6 +25,16 @@ function SitesTable({ sites, busyId, onToggleStatus }) {
               <td>{site.name}</td>
               <td>{site.subdomain}</td>
               <td>{site.templateId?.name ?? 'Unknown'}</td>
+              <td>
+                {site.ownerId ? (
+                  <>
+                    {site.ownerId.email}
+                    {site.ownerId.disabled && <span className={styles.ownerDisabled}> (disabled)</span>}
+                  </>
+                ) : (
+                  'None'
+                )}
+              </td>
               <td>
                 <span className={`${styles.status} ${styles[site.status]}`}>{site.status}</span>
               </td>
@@ -38,6 +49,11 @@ function SitesTable({ sites, busyId, onToggleStatus }) {
                 <Link className={styles.button} to={`/sites/${site._id}/preview`}>
                   Preview
                 </Link>
+                {site.ownerId && (
+                  <Link className={styles.button} to={`/sites/${site._id}/owner`}>
+                    Owner
+                  </Link>
+                )}
                 <button
                   className={styles.button}
                   type="button"

@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import BlogPostsTable from '../components/blog/BlogPostsTable.jsx'
 import Pagination from '../components/Pagination.jsx'
+import ScopeLink from '../components/ScopeLink.jsx'
+import { useSiteScope } from '../hooks/useSiteScope.js'
 import { deleteBlogPost, getSiteContent, listBlogPosts, setBlogPostStatus } from '../services/api.js'
 import styles from '../css/BlogPostsPage.module.css'
 
 function BlogPostsPage() {
-  const { id } = useParams()
+  const scope = useSiteScope()
+  const id = scope.siteId
   const [siteName, setSiteName] = useState('')
   const [result, setResult] = useState(null)
   const [page, setPage] = useState(1)
@@ -46,19 +49,19 @@ function BlogPostsPage() {
 
   return (
     <>
-      <Link className={styles.back} to="/sites">
-        Back to sites
+      <Link className={styles.back} to={scope.backHref}>
+        {scope.backLabel}
       </Link>
       <div className={styles.header}>
         <h1 className={styles.title}>Blog{siteName && `: ${siteName}`}</h1>
         <div className={styles.links}>
-          <Link className={styles.secondary} to={`/sites/${id}/preview`}>
+          <ScopeLink className={styles.secondary} to={scope.previewHref} external={scope.previewIsExternal}>
             Preview site
-          </Link>
-          <Link className={styles.secondary} to={`/sites/${id}/blog/preview`}>
+          </ScopeLink>
+          <ScopeLink className={styles.secondary} to={scope.blogPreviewHref} external={scope.previewIsExternal}>
             Preview blog
-          </Link>
-          <Link className={styles.primary} to={`/sites/${id}/blog/new`}>
+          </ScopeLink>
+          <Link className={styles.primary} to={`${scope.base}/blog/new`}>
             New post
           </Link>
         </div>
@@ -73,7 +76,7 @@ function BlogPostsPage() {
       {result?.total > 0 && (
         <>
           <BlogPostsTable
-            siteId={id}
+            editBase={`${scope.base}/blog`}
             posts={result.posts}
             busyId={busyId}
             onToggleStatus={toggleStatus}

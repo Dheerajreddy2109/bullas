@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import BlogPostForm from '../components/blog/BlogPostForm.jsx'
+import { useSiteScope } from '../hooks/useSiteScope.js'
 import { getBlogPost } from '../services/api.js'
 import styles from '../css/BlogPostEditorPage.module.css'
 
 function BlogPostEditorPage() {
-  const { id, postId } = useParams()
+  const scope = useSiteScope()
+  const id = scope.siteId
+  const { postId } = useParams()
   const navigate = useNavigate()
   const [post, setPost] = useState(null)
   const [error, setError] = useState('')
@@ -22,7 +25,7 @@ function BlogPostEditorPage() {
     setSaved(true)
     // A new post moves to its own edit address, so refreshing doesn't create it twice.
     if (!postId) {
-      navigate(`/sites/${id}/blog/${savedPost._id}/edit`, { replace: true })
+      navigate(`${scope.base}/blog/${savedPost._id}/edit`, { replace: true })
       return
     }
     setPost(savedPost)
@@ -33,7 +36,7 @@ function BlogPostEditorPage() {
 
   return (
     <>
-      <Link className={styles.back} to={`/sites/${id}/blog`}>
+      <Link className={styles.back} to={`${scope.base}/blog`}>
         Back to posts
       </Link>
       <div className={styles.header}>

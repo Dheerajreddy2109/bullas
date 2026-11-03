@@ -2,10 +2,10 @@ import { Outlet } from 'react-router-dom'
 import Sidebar from './Sidebar.jsx'
 import styles from '../css/DashboardLayout.module.css'
 
-function DashboardLayout() {
+function DashboardLayout({ brand, links }) {
   return (
     <div className={styles.layout}>
-      <Sidebar />
+      <Sidebar brand={brand} links={links} />
       <main className={styles.main}>
         <Outlet />
       </main>

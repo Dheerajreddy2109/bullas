@@ -1,4 +1,5 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import AdminSiteScope from '../components/AdminSiteScope.jsx'
 import DashboardLayout from '../components/DashboardLayout.jsx'
 import ProtectedRoute from '../components/ProtectedRoute.jsx'
 import AuthProvider from '../context/AuthProvider.jsx'
@@ -8,6 +9,7 @@ import BlogPreviewPage from '../pages/BlogPreviewPage.jsx'
 import CreateSitePage from '../pages/CreateSitePage.jsx'
 import DashboardPage from '../pages/DashboardPage.jsx'
 import LoginPage from '../pages/LoginPage.jsx'
+import OwnerManagePage from '../pages/OwnerManagePage.jsx'
 import SiteEditorPage from '../pages/SiteEditorPage.jsx'
 import SitePreviewPage from '../pages/SitePreviewPage.jsx'
 import SitesPage from '../pages/SitesPage.jsx'
@@ -21,16 +23,19 @@ function AdminApp() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
-          <Route element={<ProtectedRoute />}>
+          <Route element={<ProtectedRoute role="superadmin" />}>
             <Route element={<DashboardLayout />}>
               <Route index element={<DashboardPage />} />
               <Route path="/templates" element={<TemplatesPage />} />
               <Route path="/sites" element={<SitesPage />} />
               <Route path="/sites/new" element={<CreateSitePage />} />
-              <Route path="/sites/:id/edit" element={<SiteEditorPage />} />
-              <Route path="/sites/:id/blog" element={<BlogPostsPage />} />
-              <Route path="/sites/:id/blog/new" element={<BlogPostEditorPage />} />
-              <Route path="/sites/:id/blog/:postId/edit" element={<BlogPostEditorPage />} />
+              <Route path="/sites/:id/owner" element={<OwnerManagePage />} />
+              <Route path="/sites/:id" element={<AdminSiteScope />}>
+                <Route path="edit" element={<SiteEditorPage />} />
+                <Route path="blog" element={<BlogPostsPage />} />
+                <Route path="blog/new" element={<BlogPostEditorPage />} />
+                <Route path="blog/:postId/edit" element={<BlogPostEditorPage />} />
+              </Route>
             </Route>
             <Route path="/templates/:slug/preview" element={<TemplatePreviewPage />} />
             <Route path="/sites/:id/preview" element={<SitePreviewPage />} />

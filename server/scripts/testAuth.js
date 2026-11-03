@@ -205,8 +205,12 @@ try {
   const changed = await change({ currentPassword: PASSWORD, newPassword: NEW_PASSWORD });
   check('a valid change succeeds', changed.status === 200 && changed.json?.mustChangePassword === false);
   check(
-    'the owner route works after the change',
-    (await api({ path: '/api/owner/site', host: HOST_A, cookie: tempToken })).status === 200
+    'the new cookie from the change works on the owner route',
+    (await api({ path: '/api/owner/site', host: HOST_A, cookie: tokenFrom(changed) })).status === 200
+  );
+  check(
+    'the old login stops working after the change',
+    (await api({ path: '/api/owner/site', host: HOST_A, cookie: tempToken })).status === 401
   );
   const storedTemp = await User.findById(tempOwner._id).select('+passwordHash');
   check(
