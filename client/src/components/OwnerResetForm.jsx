@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { resetOwnerPassword } from '../services/api.js'
 import { generatePassword } from '../utils/generatePassword.js'
 import styles from '../css/OwnerResetForm.module.css'
 
-function OwnerResetForm({ siteId, onReset }) {
+// resetPassword is passed in, so the same form resets owners and builders.
+function OwnerResetForm({ resetPassword, onReset }) {
   const [password, setPassword] = useState('')
   const [shownPassword, setShownPassword] = useState('')
   const [error, setError] = useState('')
@@ -14,7 +14,7 @@ function OwnerResetForm({ siteId, onReset }) {
     setError('')
     setSaving(true)
     try {
-      const owner = await resetOwnerPassword(siteId, password)
+      const owner = await resetPassword(password)
       // Shown once from the form's own copy; the server never sends a password back.
       setShownPassword(password)
       setPassword('')
@@ -30,7 +30,7 @@ function OwnerResetForm({ siteId, onReset }) {
     <form className={styles.form} onSubmit={handleSubmit}>
       <h2 className={styles.title}>Reset password</h2>
       <p className={styles.hint}>
-        The owner is logged out everywhere and must choose their own password at next login.
+        They are logged out everywhere and must choose their own password at next login.
       </p>
       <div className={styles.row}>
         <input

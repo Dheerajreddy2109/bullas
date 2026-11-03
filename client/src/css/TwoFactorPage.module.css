@@ -1,0 +1,33 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 620px;
+}
+
+.title {
+  margin: 0;
+  font-size: 28px;
+}
+
+.intro,
+.note {
+  margin: 0;
+}
+
+.on {
+  margin: 0;
+  padding: 10px 12px;
+  font-weight: 600;
+  color: #166534;
+  background: #dcfce7;
+  border-radius: 8px;
+}
+
+.required {
+  margin: 0;
+  padding: 10px 12px;
+  color: #92400e;
+  background: #fef3c7;
+  border-radius: 8px;
+}

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useAuth } from '../hooks/useAuth.js'
+import PasswordInput from './PasswordInput.jsx'
 import styles from '../css/ChangePasswordForm.module.css'
 
 function ChangePasswordForm({ onChanged }) {
@@ -31,9 +32,8 @@ function ChangePasswordForm({ onChanged }) {
     <form className={styles.form} onSubmit={handleSubmit}>
       <label className={styles.label}>
         Current password
-        <input
+        <PasswordInput
           className={styles.input}
-          type="password"
           autoComplete="current-password"
           required
           value={currentPassword}
@@ -42,9 +42,8 @@ function ChangePasswordForm({ onChanged }) {
       </label>
       <label className={styles.label}>
         New password (at least 12 characters)
-        <input
+        <PasswordInput
           className={styles.input}
-          type="password"
           autoComplete="new-password"
           required
           value={newPassword}
@@ -53,9 +52,8 @@ function ChangePasswordForm({ onChanged }) {
       </label>
       <label className={styles.label}>
         Repeat new password
-        <input
+        <PasswordInput
           className={styles.input}
-          type="password"
           autoComplete="new-password"
           required
           value={repeat}

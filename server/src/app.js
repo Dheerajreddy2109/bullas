@@ -7,9 +7,16 @@ import siteContentRoutes from './routes/siteContent.js';
 import blogRoutes from './routes/blog.js';
 import siteRoutes from './routes/site.js';
 import ownerRoutes from './routes/owner.js';
+import internalRoutes from './routes/internal.js';
+import userRoutes from './routes/users.js';
 import { UPLOAD_ROOT } from './services/imageStorage.js';
 
 const app = express();
+
+// Behind Caddy, every request arrives from 127.0.0.1. Trusting only that address lets Express read
+// the visitor's real IP for the rate limiter, while nobody else can fake those headers.
+// Off by default, because on a computer without Caddy those headers could come from anyone.
+app.set('trust proxy', process.env.TRUST_PROXY === 'true' ? 'loopback' : false);
 
 // Without this, req.body is undefined when a client sends JSON.
 // 1 MB because a full site's Telugu content can pass the default 100 KB.
@@ -30,7 +37,9 @@ app.use(
   })
 );
 
+app.use('/api/internal', internalRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
 app.use('/api/admin', adminSiteRoutes);
 // Before sitesRoutes, whose router-wide super admin check would otherwise refuse site owners.
 app.use('/api/sites/:id/blog', blogRoutes);

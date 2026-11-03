@@ -17,6 +17,8 @@ const ADMIN_HOST = `admin.${ROOT}`;
 const HOST_A = `${PREFIX}a.${ROOT}`;
 const HOST_B = `${PREFIX}b.${ROOT}`;
 // Random for each run, so a leftover account could never be logged in to.
+// The login limit is off on development computers, so it's switched on here to test it.
+process.env.LOGIN_LIMIT = 'on';
 const PASSWORD = randomBytes(16).toString('hex');
 
 let failures = 0;

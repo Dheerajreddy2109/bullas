@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import OwnerResetForm from '../components/OwnerResetForm.jsx'
 import OwnerStatusCard from '../components/OwnerStatusCard.jsx'
-import { getSiteOwner } from '../services/api.js'
+import TwoFactorResetCard from '../components/twofactor/TwoFactorResetCard.jsx'
+import { getSiteOwner, resetOwnerPassword, resetOwnerTwoFactor, setOwnerDisabled } from '../services/api.js'
 import styles from '../css/OwnerManagePage.module.css'
 
 function OwnerManagePage() {
@@ -28,8 +29,17 @@ function OwnerManagePage() {
       {!data && !error && <p>Loading...</p>}
       {data && (
         <div className={styles.columns}>
-          <OwnerStatusCard siteId={id} owner={data.owner} onChange={updateOwner} />
-          <OwnerResetForm siteId={id} onReset={updateOwner} />
+          <OwnerStatusCard
+            owner={data.owner}
+            setDisabled={(disabled) => setOwnerDisabled(id, disabled)}
+            onChange={updateOwner}
+          />
+          <OwnerResetForm resetPassword={(password) => resetOwnerPassword(id, password)} onReset={updateOwner} />
+          <TwoFactorResetCard
+            enabled={data.owner.twoFactorEnabled}
+            reset={() => resetOwnerTwoFactor(id)}
+            onReset={() => updateOwner({ ...data.owner, twoFactorEnabled: false })}
+          />
         </div>
       )}
     </>

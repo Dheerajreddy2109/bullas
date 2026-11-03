@@ -5,7 +5,8 @@ import { requireAdminHost, requireAuth, requireRole } from '../middleware/requir
 const router = Router();
 
 // On the router, so a route added here later can't forget the login check.
-router.use(requireAdminHost, requireAuth, requireRole('superadmin'));
+// Builders need the templates too, to create sites; nothing here is per-site data.
+router.use(requireAdminHost, requireAuth, requireRole('superadmin', 'builder'));
 
 router.get('/templates', listTemplates);
 router.get('/templates/:slug', getTemplate);

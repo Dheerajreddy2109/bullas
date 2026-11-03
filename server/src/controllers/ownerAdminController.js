@@ -5,8 +5,8 @@ import User from '../../models/User.js';
 import { passwordProblem } from '../utils/passwordRules.js';
 
 function summarizeOwner(owner) {
-  const { _id, name, email, disabled, mustChangePassword } = owner;
-  return { _id, name, email, disabled, mustChangePassword };
+  const { _id, name, email, disabled, mustChangePassword, twoFactorEnabled } = owner;
+  return { _id, name, email, disabled, mustChangePassword, twoFactorEnabled };
 }
 
 // Matches on siteId too, so a site's ownerId can only ever reach that site's own owner.

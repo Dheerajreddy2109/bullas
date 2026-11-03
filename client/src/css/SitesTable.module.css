@@ -35,6 +35,14 @@
   border-radius: 999px;
 }
 
+.select {
+  padding: 4px 8px;
+  font: inherit;
+  font-size: 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
 .ownerDisabled {
   font-weight: 600;
   color: #b91c1c;

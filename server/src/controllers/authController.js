@@ -1,10 +1,19 @@
 import bcrypt from 'bcryptjs';
 import User from '../../models/User.js';
-import { AUTH_COOKIE, isAdminHost, signToken } from '../middleware/requireAuth.js';
+import {
+  AUTH_COOKIE,
+  TWO_FACTOR_COOKIE,
+  isAdminHost,
+  readPendingToken,
+  signPendingToken,
+  signToken,
+} from '../middleware/requireAuth.js';
 import { findSiteByHostname } from '../middleware/resolveSite.js';
+import { checkSecondFactor, twoFactorRequiredFor } from '../services/twoFactor.js';
 import { passwordProblem } from '../utils/passwordRules.js';
 
 const EIGHT_HOURS = 8 * 60 * 60 * 1000;
+const FIVE_MINUTES = 5 * 60 * 1000;
 
 // No Domain option: the browser then sends this cookie only to the address that set it,
 // so a login on one site is never sent to another site or to the admin area.
@@ -18,19 +27,20 @@ const cookieOptions = {
 // Compared when the email is unknown, so response time doesn't reveal which emails exist.
 const DUMMY_HASH = bcrypt.hashSync('no-account-has-this-password', 12);
 
-// The address decides which accounts can log in here, so an owner can't log in elsewhere.
-async function findAccount(req, email) {
-  if (isAdminHost(req)) {
-    return User.findOne({ email, role: 'superadmin' }).select('+passwordHash');
-  }
-
+// Which accounts may log in at this address, so an owner can't log in elsewhere.
+async function accountFilter(req) {
+  if (isAdminHost(req)) return { role: { $in: ['superadmin', 'builder'] } };
   const site = await findSiteByHostname(req.hostname);
-  if (!site) return null;
-  return User.findOne({ email, role: 'siteowner', siteId: site._id }).select('+passwordHash');
+  return site ? { role: 'siteowner', siteId: site._id } : null;
 }
 
-function publicUser({ name, email, role, siteId, mustChangePassword }) {
-  return { name, email, role, siteId, mustChangePassword };
+export function publicUser(user) {
+  const { name, email, role, siteId, mustChangePassword, twoFactorEnabled } = user;
+  return { name, email, role, siteId, mustChangePassword, twoFactorEnabled, twoFactorRequired: twoFactorRequiredFor(user) };
+}
+
+export function setLoginCookie(res, user) {
+  res.cookie(AUTH_COOKIE, signToken(user), { ...cookieOptions, maxAge: EIGHT_HOURS });
 }
 
 export async function login(req, res) {
@@ -41,7 +51,10 @@ export async function login(req, res) {
     return res.status(401).json({ error: 'Wrong email or password' });
   }
 
-  const user = await findAccount(req, email.toLowerCase().trim());
+  const filter = await accountFilter(req);
+  const user = filter
+    ? await User.findOne({ email: email.toLowerCase().trim(), ...filter }).select('+passwordHash')
+    : null;
 
   const matches = await bcrypt.compare(password, user?.passwordHash ?? DUMMY_HASH);
   // One message for both cases, so attackers can't learn which emails exist.
@@ -54,14 +67,40 @@ export async function login(req, res) {
     return res.status(403).json({ error: 'This account is disabled. Contact the Bullas administrator.' });
   }
 
-  // TODO(2FA): when user.twoFactorEnabled is true, don't set the cookie yet. Ask for the
-  // authenticator app's 6-digit code, verify it against the user's stored secret, then log in.
+  // With 2FA on, a correct password only earns a short pass to the code step, never a login.
+  if (user.twoFactorEnabled) {
+    res.cookie(TWO_FACTOR_COOKIE, signPendingToken(user), { ...cookieOptions, maxAge: FIVE_MINUTES });
+    return res.json({ twoFactorRequired: true });
+  }
+
   setLoginCookie(res, user);
   res.json(publicUser(user));
 }
 
-function setLoginCookie(res, user) {
-  res.cookie(AUTH_COOKIE, signToken(user), { ...cookieOptions, maxAge: EIGHT_HOURS });
+export async function verifyLoginCode(req, res) {
+  const payload = readPendingToken(req.cookies?.[TWO_FACTOR_COOKIE]);
+  if (!payload) {
+    return res.status(401).json({ error: 'Your login step expired. Enter your password again.' });
+  }
+
+  // Same address rules as the password step, and the account must be unchanged since then.
+  const filter = await accountFilter(req);
+  const user = filter
+    ? await User.findOne({ _id: payload.sub, ...filter }).select(
+        '+twoFactorSecret +twoFactorBackupCodes +twoFactorLastStep'
+      )
+    : null;
+  if (!user || user.disabled || (payload.sv ?? 0) !== (user.sessionVersion ?? 0)) {
+    return res.status(401).json({ error: 'Your login step expired. Enter your password again.' });
+  }
+
+  if (!(await checkSecondFactor(user, req.body?.code))) {
+    return res.status(401).json({ error: 'That code is wrong or already used' });
+  }
+
+  res.clearCookie(TWO_FACTOR_COOKIE, cookieOptions);
+  setLoginCookie(res, user);
+  res.json(publicUser(user));
 }
 
 export async function changePassword(req, res) {
@@ -97,6 +136,7 @@ export async function changePassword(req, res) {
 
 export function logout(req, res) {
   res.clearCookie(AUTH_COOKIE, cookieOptions);
+  res.clearCookie(TWO_FACTOR_COOKIE, cookieOptions);
   res.json({ status: 'logged out' });
 }
 

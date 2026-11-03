@@ -28,6 +28,9 @@ const siteSchema = new mongoose.Schema(
     templateId: { type: mongoose.Schema.Types.ObjectId, ref: 'Template', required: true },
     // Optional at first: site and owner each need the other's ID, so one must be saved first.
     ownerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    // The builder (staff member) responsible for this site. Empty means only the super admin manages it.
+    // Indexed because each builder's site list is filtered by it.
+    builderId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', index: true },
     // A private copy, so editing this site never changes the template or any other site.
     content: { type: mongoose.Schema.Types.Mixed, required: true },
     customDomain: {
@@ -44,6 +47,9 @@ const siteSchema = new mongoose.Schema(
       enum: ['none', 'pending', 'connected', 'failed'],
       default: 'none',
     },
+    // The last DNS check's explanation, so the super admin can see why a domain failed.
+    domainMessage: { type: String, default: '' },
+    domainCheckedAt: { type: Date },
     // Draft by default so a half-built site isn't shown to the public.
     status: { type: String, enum: ['draft', 'published'], default: 'draft' },
   },

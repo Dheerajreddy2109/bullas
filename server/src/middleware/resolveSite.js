@@ -22,7 +22,9 @@ export async function findSiteByHostname(hostname) {
   }
 
   // Connected only: anyone can point DNS here, so an unverified domain must not match.
-  return Site.findOne({ customDomain: host, domainStatus: 'connected' });
+  // www.dheeraj.com is matched to the saved dheeraj.com, so both addresses show the site.
+  const names = host.startsWith('www.') ? [host, host.slice(4)] : [host];
+  return Site.findOne({ customDomain: { $in: names }, domainStatus: 'connected' });
 }
 
 // Finds drafts too, because owners will need to edit them; public routes must check status.

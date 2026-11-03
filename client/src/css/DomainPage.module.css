@@ -1,0 +1,27 @@
+.back {
+  font-size: 14px;
+  color: inherit;
+}
+
+.title {
+  margin: 8px 0 6px;
+  font-size: 28px;
+}
+
+.intro {
+  margin: 0 0 16px;
+}
+
+.error {
+  padding: 10px 12px;
+  color: #991b1b;
+  background: #fee2e2;
+  border-radius: 8px;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 820px;
+}

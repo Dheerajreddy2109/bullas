@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { setOwnerDisabled } from '../services/api.js'
 import styles from '../css/OwnerStatusCard.module.css'
 
-function OwnerStatusCard({ siteId, owner, onChange }) {
+// setDisabled and the wording are passed in, so the same card serves owners and builders.
+function OwnerStatusCard({ owner, setDisabled, onChange, title = 'Owner', subject = 'owner', note = 'Their website stays online.' }) {
   const [error, setError] = useState('')
   const [saving, setSaving] = useState(false)
 
@@ -10,7 +10,7 @@ function OwnerStatusCard({ siteId, owner, onChange }) {
     setError('')
     setSaving(true)
     try {
-      onChange(await setOwnerDisabled(siteId, !owner.disabled))
+      onChange(await setDisabled(!owner.disabled))
     } catch (err) {
       setError(err.message)
     } finally {
@@ -20,7 +20,7 @@ function OwnerStatusCard({ siteId, owner, onChange }) {
 
   return (
     <div className={styles.card}>
-      <h2 className={styles.title}>Owner</h2>
+      <h2 className={styles.title}>{title}</h2>
       <dl className={styles.details}>
         <dt>Name</dt>
         <dd>{owner.name}</dd>
@@ -45,10 +45,10 @@ function OwnerStatusCard({ siteId, owner, onChange }) {
         disabled={saving}
         onClick={toggle}
       >
-        {owner.disabled ? 'Enable owner' : 'Disable owner'}
+        {owner.disabled ? `Enable ${subject}` : `Disable ${subject}`}
       </button>
       {!owner.disabled && (
-        <p className={styles.hint}>Disabling logs the owner out at once. Their website stays online.</p>
+        <p className={styles.hint}>Disabling logs them out at once. {note}</p>
       )}
     </div>
   )

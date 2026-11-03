@@ -10,6 +10,7 @@ import BlogPostsPage from '../pages/BlogPostsPage.jsx'
 import LoginPage from '../pages/LoginPage.jsx'
 import ChangePasswordPage from '../pages/owner/ChangePasswordPage.jsx'
 import OwnerDashboardPage from '../pages/owner/OwnerDashboardPage.jsx'
+import TwoFactorPage from '../pages/TwoFactorPage.jsx'
 import PublicBlogPage from '../pages/public/PublicBlogPage.jsx'
 import PublicHomePage from '../pages/public/PublicHomePage.jsx'
 import PublicPostPage from '../pages/public/PublicPostPage.jsx'
@@ -21,6 +22,7 @@ const OWNER_LINKS = [
   { to: '/admin/content', label: 'Edit website' },
   { to: '/admin/blog', label: 'Blog' },
   { to: '/admin/change-password', label: 'Change password' },
+  { to: '/admin/two-factor', label: 'Two-factor login' },
   { to: '/', label: 'View website', external: true },
 ]
 
@@ -49,7 +51,7 @@ function SiteApp() {
           <Route
             element={
               <ProtectedRoute
-                role="siteowner"
+                roles={['siteowner']}
                 loginPath="/admin/login"
                 changePasswordPath="/admin/change-password"
               />
@@ -57,6 +59,7 @@ function SiteApp() {
           >
             <Route element={<DashboardLayout brand="Website admin" links={OWNER_LINKS} />}>
               <Route path="/admin/change-password" element={<ChangePasswordPage />} />
+              <Route path="/admin/two-factor" element={<TwoFactorPage />} />
               <Route element={<OwnerSiteScope />}>
                 <Route path="/admin" element={<OwnerDashboardPage />} />
                 <Route path="/admin/content" element={<SiteEditorPage />} />

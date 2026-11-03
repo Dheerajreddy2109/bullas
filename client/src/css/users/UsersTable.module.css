@@ -1,0 +1,53 @@
+.wrapper {
+  overflow-x: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+
+.table th,
+.table td {
+  padding: 11px 14px;
+  text-align: left;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--border);
+}
+
+.table th {
+  font-size: 13px;
+  color: var(--text-heading);
+}
+
+.table tr:last-child td {
+  border-bottom: 0;
+}
+
+.active {
+  font-weight: 600;
+  color: #166534;
+}
+
+.disabled {
+  font-weight: 600;
+  color: #b91c1c;
+}
+
+.pending {
+  font-size: 13px;
+  color: #92400e;
+}
+
+.button {
+  padding: 5px 12px;
+  font-size: 14px;
+  color: inherit;
+  text-decoration: none;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}

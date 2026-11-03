@@ -4,7 +4,7 @@ import ChangePasswordForm from '../../components/ChangePasswordForm.jsx'
 import { useAuth } from '../../hooks/useAuth.js'
 import styles from '../../css/owner/ChangePasswordPage.module.css'
 
-function ChangePasswordPage() {
+function ChangePasswordPage({ homePath = '/admin' }) {
   const { user } = useAuth()
   const [done, setDone] = useState(false)
 
@@ -19,7 +19,7 @@ function ChangePasswordPage() {
       {done ? (
         <p className={styles.success}>
           Password changed. Any other logged-in browsers have been logged out.{' '}
-          <Link to="/admin">Go to your dashboard</Link>
+          <Link to={homePath}>Go to your dashboard</Link>
         </p>
       ) : (
         <ChangePasswordForm onChanged={() => setDone(true)} />

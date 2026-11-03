@@ -1,0 +1,68 @@
+# Caddy is the front desk of the server: it receives all web traffic on ports 80 and 443,
+# gets SSL certificates automatically, and passes requests to the right place.
+# Copy this file to /etc/caddy/Caddyfile on the server. See docs/deploy.md.
+
+{
+	# Let's Encrypt emails this address about certificate problems.
+	email {$ACME_EMAIL}
+
+	# Before getting a certificate for a customer's domain, Caddy asks our app whether it is a
+	# connected domain. Without this, anyone could point domains here and use up our limits.
+	on_demand_tls {
+		ask http://127.0.0.1:4000/api/internal/domain-allowed
+	}
+}
+
+# Shared by every site block below.
+(bullas_app) {
+	encode gzip
+
+	header {
+		# Tells browsers to use HTTPS only for this site from now on.
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	# The domain check is only for Caddy itself, so it is never reachable from the internet.
+	handle /api/internal/* {
+		respond 404
+	}
+
+	# API calls and uploaded images go to Node, which only listens on this machine.
+	handle /api/* {
+		reverse_proxy 127.0.0.1:4000
+	}
+	handle /uploads/* {
+		reverse_proxy 127.0.0.1:4000
+	}
+
+	# Everything else is the React app. Unknown paths get index.html, so React Router can handle
+	# addresses like /blog and /admin when a visitor refreshes the page.
+	handle {
+		root * /var/www/bullas/client/dist
+		try_files {path} /index.html
+		file_server
+	}
+}
+
+# Our own addresses: one wildcard certificate covers every site, using a DNS challenge through
+# Route 53. This avoids Let's Encrypt's limit of 50 new certificates per week for bullas.in.
+bullas.in, *.bullas.in {
+	tls {
+		dns route53 {
+			region {$AWS_REGION}
+		}
+	}
+	import bullas_app
+}
+
+# Any other domain is a customer's custom domain. Caddy gets its certificate on the first visit,
+# but only after the ask check above says yes.
+https:// {
+	tls {
+		on_demand
+	}
+	import bullas_app
+}

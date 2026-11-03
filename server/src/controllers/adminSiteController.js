@@ -3,11 +3,12 @@ import mongoose from 'mongoose';
 import Site from '../../models/Site.js';
 import Template from '../../models/Template.js';
 import User from '../../models/User.js';
+import { canManageSite } from '../utils/canManageSite.js';
 import { passwordProblem } from '../utils/passwordRules.js';
 
 // Named fields rather than "everything except", so a private field added later stays hidden.
 // content is left out of lists because it can be large and a list page doesn't need it.
-const SITE_SUMMARY = 'name subdomain templateId ownerId customDomain domainStatus status createdAt';
+const SITE_SUMMARY = 'name subdomain templateId ownerId builderId customDomain domainStatus status createdAt';
 
 function summarize(site) {
   const { _id, name, subdomain, templateId, status, domainStatus, createdAt } = site;
@@ -33,10 +34,13 @@ export async function getTemplate(req, res) {
 }
 
 export async function listSites(req, res) {
-  const sites = await Site.find()
+  // A builder's list is filtered on the server, so other builders' sites never reach their browser.
+  const filter = req.user.role === 'builder' ? { builderId: req.user._id } : {};
+  const sites = await Site.find(filter)
     .select(SITE_SUMMARY)
     .populate('templateId', 'name slug')
     .populate('ownerId', 'name email disabled mustChangePassword')
+    .populate('builderId', 'name email')
     .sort({ createdAt: -1 });
   res.json(sites);
 }
@@ -82,6 +86,8 @@ export async function createSite(req, res) {
         name,
         subdomain,
         ownerId,
+        // A builder's new site is theirs; a super admin's starts unassigned and can be assigned later.
+        builderId: req.user.role === 'builder' ? req.user._id : undefined,
         templateId: template._id,
         content: structuredClone(template.defaultContent),
       });
@@ -127,11 +133,40 @@ export async function updateSiteStatus(req, res) {
   }
 
   const site = await Site.findById(req.params.id);
-  if (!site) {
+  // Only the super admin learns that a site doesn't exist; builders get 403 for both cases.
+  if (!site && req.user.role === 'superadmin') {
     return res.status(404).json({ error: 'Site not found' });
+  }
+  if (!canManageSite(req.user, site)) {
+    return res.status(403).json({ error: 'Not allowed here' });
   }
 
   site.status = status;
   await site.save();
   res.json(summarize(site));
+}
+
+// Super admin only: gives a site to a builder, or takes it back with builderId null.
+export async function assignSiteBuilder(req, res) {
+  const { builderId } = req.body ?? {};
+
+  if (!mongoose.isValidObjectId(req.params.id)) {
+    return res.status(400).json({ error: 'Invalid site ID' });
+  }
+  if (builderId !== null && !mongoose.isValidObjectId(builderId)) {
+    return res.status(400).json({ error: 'builderId must be a builder ID or null' });
+  }
+
+  const site = await Site.findById(req.params.id);
+  if (!site) return res.status(404).json({ error: 'Site not found' });
+
+  if (builderId !== null) {
+    // Checked, so a site can't be handed to an owner or a made-up ID.
+    const builder = await User.exists({ _id: builderId, role: 'builder' });
+    if (!builder) return res.status(400).json({ error: 'That builder does not exist' });
+  }
+
+  site.builderId = builderId ?? undefined;
+  await site.save();
+  res.json({ ...summarize(site), builderId: site.builderId ?? null });
 }

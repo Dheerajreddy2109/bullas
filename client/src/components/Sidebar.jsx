@@ -2,23 +2,30 @@ import { NavLink } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth.js'
 import styles from '../css/Sidebar.module.css'
 
-const ADMIN_LINKS = [
-  { to: '/', label: 'Dashboard', end: true },
-  { to: '/sites', label: 'Sites' },
-  { to: '/templates', label: 'Templates' },
-]
+// Users is only listed for the super admin; the server refuses builders anyway.
+function adminLinks(role) {
+  return [
+    { to: '/', label: 'Dashboard', end: true },
+    { to: '/sites', label: 'Sites' },
+    { to: '/templates', label: 'Templates' },
+    ...(role === 'superadmin' ? [{ to: '/users', label: 'Users' }] : []),
+    { to: '/change-password', label: 'Change password' },
+    { to: '/two-factor', label: 'Two-factor login' },
+  ]
+}
 
 const linkClass = ({ isActive }) => (isActive ? `${styles.link} ${styles.active}` : styles.link)
 
-// Links come in as a prop, so the super admin and site owners share one sidebar.
-function Sidebar({ brand = 'Bullas', links = ADMIN_LINKS }) {
+// Links come in as a prop, so the admin area and site owners share one sidebar.
+function Sidebar({ brand = 'Bullas', links }) {
   const { user, signOut } = useAuth()
+  const items = links ?? adminLinks(user.role)
 
   return (
     <aside className={styles.sidebar}>
       <p className={styles.brand}>{brand}</p>
       <nav className={styles.nav}>
-        {links.map((link) =>
+        {items.map((link) =>
           link.external ? (
             <a key={link.to} className={styles.link} href={link.to} target="_blank" rel="noopener noreferrer">
               {link.label}
@@ -31,7 +38,10 @@ function Sidebar({ brand = 'Bullas', links = ADMIN_LINKS }) {
         )}
       </nav>
       <div className={styles.account}>
-        <span className={styles.user}>{user.name}</span>
+        <span className={styles.user}>
+          {user.name}
+          {user.role === 'builder' && ' (builder)'}
+        </span>
         <button className={styles.logout} type="button" onClick={signOut}>
           Log out
         </button>

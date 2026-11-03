@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { useAuth } from '../hooks/useAuth.js'
+import PasswordInput from './PasswordInput.jsx'
+import TwoFactorCodeForm from './twofactor/TwoFactorCodeForm.jsx'
 import styles from '../css/LoginForm.module.css'
 
 function LoginForm() {
@@ -8,18 +10,26 @@ function LoginForm() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  // Becomes true after a correct password when the account uses two-factor login.
+  const [needsCode, setNeedsCode] = useState(false)
 
   async function handleSubmit(event) {
     event.preventDefault()
     setError('')
     setSubmitting(true)
     try {
-      await signIn(email, password)
+      if ((await signIn(email, password)) === 'code') {
+        setNeedsCode(true)
+        setPassword('')
+        setSubmitting(false)
+      }
     } catch (err) {
       setError(err.message)
       setSubmitting(false)
     }
   }
+
+  if (needsCode) return <TwoFactorCodeForm onBack={() => setNeedsCode(false)} />
 
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
@@ -36,9 +46,8 @@ function LoginForm() {
       </label>
       <label className={styles.label}>
         Password
-        <input
+        <PasswordInput
           className={styles.input}
-          type="password"
           autoComplete="current-password"
           required
           value={password}

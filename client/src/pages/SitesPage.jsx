@@ -1,11 +1,15 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import SitesTable from '../components/SitesTable.jsx'
-import { getSites, updateSiteStatus } from '../services/api.js'
+import { useAuth } from '../hooks/useAuth.js'
+import { assignSiteBuilder, getSites, listUsers, updateSiteStatus } from '../services/api.js'
 import styles from '../css/SitesPage.module.css'
 
 function SitesPage() {
+  const { user } = useAuth()
+  const isSuperAdmin = user.role === 'superadmin'
   const [sites, setSites] = useState(null)
+  const [builders, setBuilders] = useState([])
   const [error, setError] = useState('')
   const [busyId, setBusyId] = useState(null)
 
@@ -13,17 +17,20 @@ function SitesPage() {
     getSites()
       .then(setSites)
       .catch((err) => setError(err.message))
-  }, [])
+    // Builders can't list users, so the request is only made for the super admin.
+    if (isSuperAdmin) {
+      listUsers()
+        .then(setBuilders)
+        .catch((err) => setError(err.message))
+    }
+  }, [isSuperAdmin])
 
-  async function handleToggleStatus(site) {
+  async function runForSite(site, action) {
     setError('')
     setBusyId(site._id)
     try {
-      const nextStatus = site.status === 'published' ? 'draft' : 'published'
-      const updated = await updateSiteStatus(site._id, nextStatus)
-      setSites((current) =>
-        current.map((item) => (item._id === site._id ? { ...item, status: updated.status } : item)),
-      )
+      await action()
+      setSites(await getSites())
     } catch (err) {
       setError(err.message)
     } finally {
@@ -31,10 +38,14 @@ function SitesPage() {
     }
   }
 
+  const handleToggleStatus = (site) =>
+    runForSite(site, () => updateSiteStatus(site._id, site.status === 'published' ? 'draft' : 'published'))
+  const handleAssign = (site, builderId) => runForSite(site, () => assignSiteBuilder(site._id, builderId))
+
   return (
     <>
       <div className={styles.header}>
-        <h1 className={styles.title}>Sites</h1>
+        <h1 className={styles.title}>{isSuperAdmin ? 'Sites' : 'My sites'}</h1>
         <Link className={styles.button} to="/sites/new">
           Create site
         </Link>
@@ -47,7 +58,14 @@ function SitesPage() {
       {!error && !sites && <p>Loading...</p>}
       {sites?.length === 0 && <p>No sites yet. Create your first one.</p>}
       {sites?.length > 0 && (
-        <SitesTable sites={sites} busyId={busyId} onToggleStatus={handleToggleStatus} />
+        <SitesTable
+          sites={sites}
+          busyId={busyId}
+          onToggleStatus={handleToggleStatus}
+          isSuperAdmin={isSuperAdmin}
+          builders={builders}
+          onAssign={handleAssign}
+        />
       )}
     </>
   )

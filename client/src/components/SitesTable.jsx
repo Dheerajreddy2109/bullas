@@ -3,7 +3,9 @@ import styles from '../css/SitesTable.module.css'
 
 const formatDate = (value) => new Date(value).toLocaleDateString()
 
-function SitesTable({ sites, busyId, onToggleStatus }) {
+// Owner, domain and builder controls are shown to the super admin only; the server refuses
+// builders anyway, so hiding them just avoids buttons that would only give errors.
+function SitesTable({ sites, busyId, onToggleStatus, isSuperAdmin, builders = [], onAssign }) {
   return (
     // Scrolls inside its own box, so a wide table can't push a phone screen sideways.
     <div className={styles.wrapper}>
@@ -14,6 +16,7 @@ function SitesTable({ sites, busyId, onToggleStatus }) {
             <th>Subdomain</th>
             <th>Template</th>
             <th>Owner</th>
+            {isSuperAdmin && <th>Builder</th>}
             <th>Status</th>
             <th>Created</th>
             <th>Action</th>
@@ -35,6 +38,24 @@ function SitesTable({ sites, busyId, onToggleStatus }) {
                   'None'
                 )}
               </td>
+              {isSuperAdmin && (
+                <td>
+                  <select
+                    className={styles.select}
+                    aria-label={`Builder for ${site.name}`}
+                    disabled={busyId === site._id}
+                    value={site.builderId?._id ?? ''}
+                    onChange={(event) => onAssign(site, event.target.value || null)}
+                  >
+                    <option value="">Unassigned</option>
+                    {builders.map((builder) => (
+                      <option key={builder._id} value={builder._id}>
+                        {builder.name}
+                      </option>
+                    ))}
+                  </select>
+                </td>
+              )}
               <td>
                 <span className={`${styles.status} ${styles[site.status]}`}>{site.status}</span>
               </td>
@@ -49,7 +70,12 @@ function SitesTable({ sites, busyId, onToggleStatus }) {
                 <Link className={styles.button} to={`/sites/${site._id}/preview`}>
                   Preview
                 </Link>
-                {site.ownerId && (
+                {isSuperAdmin && (
+                  <Link className={styles.button} to={`/sites/${site._id}/domain`}>
+                    Domain
+                  </Link>
+                )}
+                {isSuperAdmin && site.ownerId && (
                   <Link className={styles.button} to={`/sites/${site._id}/owner`}>
                     Owner
                   </Link>

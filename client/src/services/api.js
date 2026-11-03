@@ -31,8 +31,32 @@ export const getPublicPost = (slug) => request(`/api/site/blog/${encodeURICompon
 export const login = (email, password) => sendJson('POST', '/api/auth/login', { email, password })
 export const logout = () => sendJson('POST', '/api/auth/logout')
 export const getCurrentUser = () => request('/api/auth/me')
+export const verifyTwoFactor = (code) => sendJson('POST', '/api/auth/2fa/verify', { code })
+export const setupTwoFactor = () => sendJson('POST', '/api/auth/2fa/setup')
+export const enableTwoFactor = (code) => sendJson('POST', '/api/auth/2fa/enable', { code })
+export const disableTwoFactor = (password, code) => sendJson('POST', '/api/auth/2fa/disable', { password, code })
+export const resetUserTwoFactor = (userId) =>
+  sendJson('POST', `/api/users/${encodeURIComponent(userId)}/two-factor/reset`)
+export const resetOwnerTwoFactor = (siteId) =>
+  sendJson('POST', `/api/sites/${encodeURIComponent(siteId)}/owner/two-factor/reset`)
 export const changePassword = (currentPassword, newPassword) =>
   sendJson('POST', '/api/auth/change-password', { currentPassword, newPassword })
+
+const domainPath = (siteId) => `/api/sites/${encodeURIComponent(siteId)}/domain`
+export const getSiteDomain = (siteId) => request(domainPath(siteId))
+export const saveSiteDomain = (siteId, domain) => sendJson('PUT', domainPath(siteId), { domain })
+export const verifySiteDomain = (siteId) => sendJson('POST', `${domainPath(siteId)}/verify`)
+export const removeSiteDomain = (siteId) => request(domainPath(siteId), { method: 'DELETE' })
+
+export const listUsers = () => request('/api/users')
+export const getUser = (userId) => request(`/api/users/${encodeURIComponent(userId)}`)
+export const createUser = (user) => sendJson('POST', '/api/users', user)
+export const resetUserPassword = (userId, temporaryPassword) =>
+  sendJson('POST', `/api/users/${encodeURIComponent(userId)}/reset-password`, { temporaryPassword })
+export const setUserDisabled = (userId, disabled) =>
+  sendJson('PATCH', `/api/users/${encodeURIComponent(userId)}/status`, { disabled })
+export const assignSiteBuilder = (siteId, builderId) =>
+  sendJson('PATCH', `/api/sites/${encodeURIComponent(siteId)}/builder`, { builderId })
 
 export const getSiteOwner = (siteId) => request(`/api/sites/${encodeURIComponent(siteId)}/owner`)
 export const resetOwnerPassword = (siteId, temporaryPassword) =>

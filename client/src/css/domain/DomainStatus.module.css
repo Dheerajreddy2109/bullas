@@ -1,0 +1,67 @@
+.box {
+  padding: 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.badge {
+  padding: 4px 12px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 999px;
+}
+
+.none {
+  color: #374151;
+  background: #e5e7eb;
+}
+
+.pending {
+  color: #92400e;
+  background: #fef3c7;
+}
+
+.connected {
+  color: #166534;
+  background: #dcfce7;
+}
+
+.failed {
+  color: #991b1b;
+  background: #fee2e2;
+}
+
+.verify {
+  padding: 8px 16px;
+  font: inherit;
+  font-weight: 600;
+  color: #fff;
+  background: #0b6b3a;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.verify:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.message {
+  margin: 12px 0 0;
+  font-size: 14px;
+}
+
+.time {
+  margin: 6px 0 0;
+  font-size: 13px;
+}
