@@ -4,6 +4,7 @@ import {
   getSiteContent,
   listSiteTemplates,
   updateSiteContent,
+  updateSiteLanguage,
   uploadSiteImage,
 } from '../controllers/siteContentController.js';
 import { requireAuth } from '../middleware/requireAuth.js';
@@ -19,6 +20,7 @@ const canManage = [requireAuth, requireSiteAccess];
 
 router.get('/content', canManage, getSiteContent);
 router.put('/content', requireJson, canManage, updateSiteContent);
+router.put('/language', requireJson, canManage, updateSiteLanguage);
 // Anyone who can edit the site can switch its template; old content is archived, never deleted.
 router.get('/templates', canManage, listSiteTemplates);
 router.put('/template', requireJson, canManage, changeSiteTemplate);

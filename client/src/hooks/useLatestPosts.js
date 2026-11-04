@@ -7,15 +7,19 @@ const COUNT = 20
 // The newest published posts for a home page. With a siteId it uses the admin API (previews);
 // without one it uses the public API, which works out the site from the address.
 // Errors just leave the list empty, so a blog problem never breaks the home page.
-export function useLatestPosts(siteId) {
+export function useLatestPosts(siteId, language) {
   const [posts, setPosts] = useState([])
 
   useEffect(() => {
+    let current = true
     const load = siteId
       ? listBlogPosts(siteId, { status: 'published', limit: COUNT })
-      : getPublicBlog(1, COUNT)
-    load.then((result) => setPosts(result.posts)).catch(() => setPosts([]))
-  }, [siteId])
+      : getPublicBlog(1, COUNT, '', language)
+    load.then((result) => current && setPosts(result.posts)).catch(() => current && setPosts([]))
+    return () => {
+      current = false
+    }
+  }, [siteId, language])
 
   return posts
 }

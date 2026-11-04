@@ -82,6 +82,11 @@
   -webkit-line-clamp: 2;
 }
 
+.date svg {
+  flex-shrink: 0;
+  transform: translateY(calc(var(--text-nudge, 0px) * -1));
+}
+
 .date {
   display: flex;
   gap: 5px;

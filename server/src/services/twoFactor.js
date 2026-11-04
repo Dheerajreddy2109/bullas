@@ -5,8 +5,9 @@ import { decrypt, encrypt } from '../utils/secretBox.js';
 
 const ISSUER = 'Bullas';
 const BACKUP_CODE_COUNT = 10;
-// Allows one 30-second step either side, so a phone clock that is slightly off still works.
-const CLOCK_TOLERANCE_SECONDS = 30;
+// None: a code stops working the moment its timer ends. This needs the server's clock to be
+// accurate, and a phone clock that is well off will fail until the phone's time is corrected.
+const CLOCK_TOLERANCE_SECONDS = 0;
 
 // Required for staff accounts on the live server; your computer can opt in with TWO_FACTOR_REQUIRED=true.
 export function twoFactorEnforced() {

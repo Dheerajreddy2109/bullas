@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { DEFAULT_LANGUAGE, SITE_LANGUAGES } from '../src/utils/languages.js';
 
 // These names are needed by Bullas itself, so a customer must not be able to claim them.
 const RESERVED_SUBDOMAINS = ['www', 'admin', 'superadmin', 'api', 'app', 'sites', 'mail', 'root'];
@@ -33,6 +34,8 @@ const siteSchema = new mongoose.Schema(
     builderId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', index: true },
     // A private copy, so editing this site never changes the template or any other site.
     content: { type: mongoose.Schema.Types.Mixed, required: true },
+    // The language the owner writes in. Visitors choosing it see the original, not a translation.
+    language: { type: String, enum: SITE_LANGUAGES, default: DEFAULT_LANGUAGE },
     // Content saved under each template the site used before, so switching back loses nothing.
     // Never sent to the browser; only the template-switch route reads it.
     contentArchive: { type: mongoose.Schema.Types.Mixed, default: {} },

@@ -1,0 +1,85 @@
+/* One pill holding the globe, the language and the arrow, all centred on the same line. */
+.switcher {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: 30px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 999px;
+  transition: background 0.15s;
+}
+
+.switcher:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+/* Keyboard users need to see where they are. */
+.switcher:focus-within {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+/* The icons sit over the select and let clicks through, so the whole pill opens the list. */
+.globe,
+.chevron {
+  position: absolute;
+  top: 50%;
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.globe {
+  left: 10px;
+  font-size: 13px;
+}
+
+.chevron {
+  right: 10px;
+  font-size: 9px;
+  opacity: 0.85;
+}
+
+/* appearance: none removes the browser's own box and arrow, which can't be aligned. */
+.select {
+  height: 100%;
+  margin: 0;
+  /* Moves the letters to the visual middle; never below zero, which padding doesn't allow. */
+  padding: max(0px, var(--text-nudge, 0px)) 26px 0 29px;
+  box-sizing: border-box;
+  /* As wide as the chosen language, not the longest one. Browsers without this are just a bit wider. */
+  field-sizing: content;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 28px;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  border-radius: inherit;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+}
+
+/* The list opens on a light background on many computers, so white text would vanish. */
+.select option {
+  font-weight: 400;
+  color: #111827;
+  background: #fff;
+}
+
+/* Read by screen readers only. */
+.hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+:global([data-look='heritage']) .switcher {
+  border-color: #d4a64a;
+}

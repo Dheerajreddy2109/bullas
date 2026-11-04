@@ -7,7 +7,7 @@
 
 /* The same look as the home page's Posts tabs, so both feel like one feature. */
 .tab {
-  padding: var(--space-2) var(--space-4);
+  padding: calc(var(--space-2) + var(--text-nudge, 0px)) var(--space-4) calc(var(--space-2) - var(--text-nudge, 0px));
   font-weight: 700;
   color: var(--ink);
   text-decoration: none;

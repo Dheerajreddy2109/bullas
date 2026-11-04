@@ -2,6 +2,7 @@ import Container from './Container.jsx'
 import PortalFooter from '../portal/PortalFooter.jsx'
 import PortalBanner from '../portal/PortalBanner.jsx'
 import PortalTopBar from '../portal/PortalTopBar.jsx'
+import { useLanguage } from '../../hooks/useLanguage.js'
 import { blogAwareHref, readContent, safeColor } from '../../templates/contentHelpers.js'
 import { lookFor } from '../../templates/templateStyles.js'
 import { themeFor } from '../../templates/themes.js'
@@ -10,7 +11,8 @@ import styles from '../../css/sections/SiteShell.module.css'
 // The site's own header and footer around pages that aren't the home page, such as the blog.
 function SiteShell({ site, homeHref = '/', blogHref = '/blog', children }) {
   const c = readContent(site.content)
-  const look = lookFor(site.templateSlug)
+  const { language } = useLanguage()
+  const look = lookFor(language)
   const title = c.village?.name ?? site.name
 
   // Menu links like #members point at home page sections, so they must lead back there.

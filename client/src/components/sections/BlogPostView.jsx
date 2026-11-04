@@ -1,14 +1,16 @@
 import SmartImage from './SmartImage.jsx'
+import { useLanguage } from '../../hooks/useLanguage.js'
 import { postDate } from '../portal/postDate.js'
 import styles from '../../css/sections/BlogPostView.module.css'
 
 // The page passes in its own breadcrumbs, because the trail differs on the live site and in previews.
 function BlogPostView({ post, breadcrumbs }) {
+  const { language } = useLanguage()
   return (
     <article className={styles.post}>
       {breadcrumbs}
       <h1 className={styles.title}>{post.title}</h1>
-      <p className={styles.date}>{postDate(post)}</p>
+      <p className={styles.date}>{postDate(post, language)}</p>
       {post.image && <SmartImage className={styles.image} src={post.image} alt={post.title} />}
       {/* Safe only because the server cleans every body with an allow-list before saving it. */}
       <div className={styles.body} dangerouslySetInnerHTML={{ __html: post.body }} />

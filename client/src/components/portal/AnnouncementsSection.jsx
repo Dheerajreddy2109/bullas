@@ -3,6 +3,7 @@ import SectionBlock from '../sections/SectionBlock.jsx'
 import AnnouncementCard from './AnnouncementCard.jsx'
 import AnnouncementChips from './AnnouncementChips.jsx'
 import ViewAllButton from './ViewAllButton.jsx'
+import { useLanguage } from '../../hooks/useLanguage.js'
 import styles from '../../css/portal/AnnouncementsSection.module.css'
 
 const FIRST_ROW = 5
@@ -11,6 +12,7 @@ const FIRST_ROW = 5
 // The layout leaves this out when there are no announcements.
 function AnnouncementsSection({ number, title, subtitle, items = [] }) {
   const [chosen, setChosen] = useState('')
+  const { labels } = useLanguage()
   const [expanded, setExpanded] = useState(false)
 
   const categories = [...new Set(items.map((item) => item.category))]
@@ -44,7 +46,7 @@ function AnnouncementsSection({ number, title, subtitle, items = [] }) {
           <ViewAllButton
             expanded={expanded}
             onToggle={() => setExpanded((current) => !current)}
-            label="అన్ని ప్రకటనలు చూడండి"
+            label={labels.viewAllAnnouncements}
           />
         </div>
       )}

@@ -9,6 +9,7 @@ import PortalTopBar from '../components/portal/PortalTopBar.jsx'
 import ContactBlock from '../components/sections/ContactBlock.jsx'
 import Container from '../components/sections/Container.jsx'
 import SectionBlock from '../components/sections/SectionBlock.jsx'
+import { useLanguage } from '../hooks/useLanguage.js'
 import { useScrollToHash } from '../hooks/useScrollToHash.js'
 import { blogAwareHref, readContent, safeColor } from './contentHelpers.js'
 import { lookFor } from './templateStyles.js'
@@ -30,7 +31,8 @@ function VillagePortalLayout({
 }) {
   // The Posts section grows when posts arrive, which moves everything below it.
   useScrollToHash(latestPosts.length)
-  const look = lookFor(templateSlug)
+  const { language, labels } = useLanguage()
+  const look = lookFor(language)
   const theme = themeFor(templateSlug)
   const c = readContent(content)
   const brand = safeColor(c.branding?.brandColor, '#0b6b3a')
@@ -70,14 +72,14 @@ function VillagePortalLayout({
               tone="a"
               leader={{ photo: c.schemes?.centralLeaderPhoto, name: c.schemes?.centralLeaderName, title: c.schemes?.centralLeaderTitle }}
               schemes={c.schemes?.central}
-              viewAllLabel="అన్ని కేంద్ర పథకాలు"
+              viewAllLabel={labels.viewAllCentral}
             />
             <SchemeColumn
               title={c.schemes?.stateTitle}
               tone="b"
               leader={{ photo: c.schemes?.stateLeaderPhoto, name: c.schemes?.stateLeaderName, title: c.schemes?.stateLeaderTitle }}
               schemes={c.schemes?.state}
-              viewAllLabel="అన్ని రాష్ట్ర పథకాలు"
+              viewAllLabel={labels.viewAllState}
             />
           </div>
         </SectionBlock>

@@ -1,15 +1,17 @@
 import { Link } from 'react-router-dom'
 import { POST_CATEGORIES } from './postCategories.js'
+import { useLanguage } from '../../hooks/useLanguage.js'
 import styles from '../../css/blog/BlogCategoryTabs.module.css'
 
 // The blog page's category tabs. They are links, not buttons, so a visitor can share or bookmark
 // one category, and the browser's back button returns to the previous tab.
 // active is the chosen category's value, or empty for all posts.
 function BlogCategoryTabs({ blogHref, active = '' }) {
-  const tabs = [{ value: '', telugu: 'అన్నీ' }, ...POST_CATEGORIES]
+  const { labels } = useLanguage()
+  const tabs = [{ value: '', label: labels.all }, ...POST_CATEGORIES.map((item) => ({ value: item.value, label: labels[`cat_${item.value}`] }))]
 
   return (
-    <nav className={styles.tabs} aria-label="పోస్టుల వర్గాలు">
+    <nav className={styles.tabs} aria-label={labels.chooseCategory}>
       {tabs.map((tab) => (
         <Link
           key={tab.value || 'all'}
@@ -17,7 +19,7 @@ function BlogCategoryTabs({ blogHref, active = '' }) {
           to={tab.value ? `${blogHref}?category=${tab.value}` : blogHref}
           aria-current={active === tab.value ? 'page' : undefined}
         >
-          {tab.telugu}
+          {tab.label}
         </Link>
       ))}
     </nav>

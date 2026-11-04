@@ -46,7 +46,7 @@
   display: inline-flex;
   gap: 5px;
   align-items: center;
-  padding: 2px 10px;
+  padding: calc(2px + var(--text-nudge, 0px)) 10px calc(2px - var(--text-nudge, 0px));
   font-size: var(--text-xs);
   font-weight: 700;
   color: #fff;
@@ -135,4 +135,12 @@
 :global([data-look='green']) .wedding,
 :global([data-look='green']) .others {
   --accent: #854d0e;
+}
+
+/* The text is nudged by each theme's font, so the icons beside it are moved back to line up. */
+.badge svg,
+.date svg,
+.phone svg {
+  flex-shrink: 0;
+  transform: translateY(calc(var(--text-nudge, 0px) * -1));
 }

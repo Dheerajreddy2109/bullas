@@ -2,6 +2,9 @@
   /* Sections choose their layout from this page's width, not the screen's, so the small preview
      in Edit website arranges itself just as a phone or tablet would. */
   container-type: inline-size;
+  /* A translated word can be longer than its box, and some have no spaces to break at.
+     This lets it wrap, in every language, instead of spilling over the next card. */
+  overflow-wrap: anywhere;
   display: flex;
   flex-direction: column;
   min-height: 100svh;

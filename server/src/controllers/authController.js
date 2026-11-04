@@ -96,7 +96,7 @@ export async function verifyLoginCode(req, res) {
   }
 
   if (!(await checkSecondFactor(user, req.body?.code))) {
-    return res.status(401).json({ error: 'That code is wrong or already used' });
+    return res.status(401).json({ error: 'That code is wrong, expired or already used. Wait for the next code in your app and try again' });
   }
 
   res.clearCookie(TWO_FACTOR_COOKIE, cookieOptions);

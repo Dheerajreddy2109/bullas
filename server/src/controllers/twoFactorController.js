@@ -37,7 +37,7 @@ export async function confirmTwoFactor(req, res) {
 
   const backupCodes = await enableTwoFactor(user, req.body?.code);
   if (!backupCodes) {
-    return res.status(400).json({ error: 'That code is wrong. Check the phone app and try again.' });
+    return res.status(400).json({ error: 'That code is wrong or expired. Wait for the next code in your phone app and try again' });
   }
 
   // Turning it on ended other logins, so this browser gets a fresh one.

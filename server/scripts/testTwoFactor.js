@@ -31,6 +31,12 @@ async function cleanUp() {
 }
 
 // Codes for this moment, or the next 30-second step (to test without waiting for the clock).
+// Waits for a new code if this one is near the end of its 30 seconds.
+async function startOfCodeStep() {
+  const into = Math.floor(Date.now() / 1000) % 30;
+  if (into > 15) await new Promise((resolve) => setTimeout(resolve, (30 - into) * 1000 + 200));
+}
+
 const codeAt = (secret, offsetSteps = 0) =>
   generateSync({ secret, epoch: Math.floor(Date.now() / 1000) + offsetSteps * 30 });
 
@@ -107,6 +113,8 @@ try {
     'a wrong code does not turn 2FA on',
     (await api({ method: 'POST', path: '/api/auth/2fa/enable', cookies: { [AUTH_COOKIE]: session }, body: { code: '000000' } })).status === 400
   );
+  // Starts early in a 30-second step, so the checks below all run within one code's lifetime.
+  await startOfCodeStep();
   const enabled = await api({ method: 'POST', path: '/api/auth/2fa/enable', cookies: { [AUTH_COOKIE]: session }, body: { code: codeAt(secret) } });
   const backupCodes = enabled.json?.backupCodes ?? [];
   check('a correct code turns 2FA on and gives 10 backup codes', enabled.status === 200 && backupCodes.length === 10);
@@ -127,10 +135,14 @@ try {
     api({ method: 'POST', path: '/api/auth/2fa/verify', host, cookies: { [TWO_FACTOR_COOKIE]: pending }, body: { code } });
   check('a wrong code gets 401', (await verify('123456')).status === 401);
   check('the code used to turn 2FA on cannot be reused', (await verify(codeAt(secret))).status === 401);
-  const codeNext = codeAt(secret, 1);
-  const good = await verify(codeNext);
-  check('the next code logs in', good.status === 200 && Boolean(good.session));
-  check('the same code cannot be used twice', (await verify(codeNext, (await login(builder.email)).pending)).status === 401);
+  // As if 2FA was turned on long ago, so only the code's time decides these, not "already used".
+  await User.updateOne({ _id: builder._id }, { $set: { twoFactorLastStep: 0 } });
+  check('a code whose timer has ended is refused', (await verify(codeAt(secret, -1))).status === 401);
+  check('a code from the next 30 seconds is refused', (await verify(codeAt(secret, 1))).status === 401);
+  const codeNow = codeAt(secret);
+  const good = await verify(codeNow);
+  check('the current code logs in', good.status === 200 && Boolean(good.session));
+  check('the same code cannot be used twice', (await verify(codeNow, (await login(builder.email)).pending)).status === 401);
   check('verifying with no half-step pass gets 401', (await verify(codeAt(secret, 1), undefined)).status === 401);
   check(
     'the half-step pass does not work on a customer site',

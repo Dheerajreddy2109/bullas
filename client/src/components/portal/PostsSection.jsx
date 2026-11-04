@@ -4,6 +4,7 @@ import ContentTabs from '../sections/ContentTabs.jsx'
 import SectionBlock from '../sections/SectionBlock.jsx'
 import PostCard from './PostCard.jsx'
 import RecentPosts from './RecentPosts.jsx'
+import { useLanguage } from '../../hooks/useLanguage.js'
 import styles from '../../css/portal/PostsSection.module.css'
 
 const PER_TAB = 6
@@ -15,6 +16,7 @@ const inCategory = (posts, value) => posts.filter((post) => (post.category ?? 'd
 // Tabs show only real blog posts, so a new site has no sample boxes to clear away.
 // about holds the section's headings, which the owner can edit.
 function PostsSection({ number, about = {}, posts = [], postHref, blogHref, look }) {
+  const { labels } = useLanguage()
   function postGrid(value) {
     const items = inCategory(posts, value)
     if (items.length === 0) return null
@@ -35,7 +37,7 @@ function PostsSection({ number, about = {}, posts = [], postHref, blogHref, look
   }
 
   const tabs = POST_CATEGORIES.map((category) => ({
-    label: category.telugu,
+    label: labels[`cat_${category.value}`],
     content: postGrid(category.value) ?? <p className={styles.empty}>{look.emptyText}</p>,
   }))
 

@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import Breadcrumbs from '../components/Breadcrumbs.jsx'
+import LanguageScope from '../components/LanguageScope.jsx'
 import BlogCategoryTabs from '../components/blog/BlogCategoryTabs.jsx'
 import BlogList from '../components/sections/BlogList.jsx'
 import BlogPostView from '../components/sections/BlogPostView.jsx'
 import SiteShell from '../components/sections/SiteShell.jsx'
 import Pagination from '../components/Pagination.jsx'
 import { getBlogPost, getSiteContent, listBlogPosts } from '../services/api.js'
+import { labelsFor } from '../templates/labels.js'
 import { lookFor } from '../templates/templateStyles.js'
 import { POST_CATEGORIES } from '../components/blog/postCategories.js'
 import styles from '../css/BlogPreviewPage.module.css'
@@ -40,11 +42,13 @@ function BlogPreviewPage() {
   if (error) return <p role="alert">Could not load the blog: {error}</p>
   if (!site) return <p>Loading...</p>
 
-  const look = lookFor(site.templateSlug)
+  const look = lookFor(site.language)
+  const labels = labelsFor(site.language)
+  const categoryLabel = category && labels[`cat_${category.value}`]
   const listHref = `/sites/${id}/blog/preview`
 
   return (
-    <>
+    <LanguageScope language={site.language}>
       <div className={styles.bar}>
         <Breadcrumbs
           look="light"
@@ -88,7 +92,7 @@ function BlogPreviewPage() {
               homeLabel={look.homeLabel}
               items={[{ label: look.homeLabel, to: `/sites/${id}/preview` }, { label: look.blogLabel }]}
             />
-            <h2 className={styles.heading}>{category ? category.telugu : look.blogHeading}</h2>
+            <h2 className={styles.heading}>{category ? categoryLabel : look.blogHeading}</h2>
             <BlogCategoryTabs blogHref={listHref} active={category?.value} />
             {result && (
               <>
@@ -107,7 +111,7 @@ function BlogPreviewPage() {
           </>
         )}
       </SiteShell>
-    </>
+    </LanguageScope>
   )
 }
 

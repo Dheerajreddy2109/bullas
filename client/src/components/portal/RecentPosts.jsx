@@ -1,11 +1,13 @@
 import { FaRegCalendarDays } from 'react-icons/fa6'
 import { Link } from 'react-router-dom'
 import SmartImage from '../sections/SmartImage.jsx'
+import { useLanguage } from '../../hooks/useLanguage.js'
 import { postDate } from './postDate.js'
 import styles from '../../css/portal/RecentPosts.module.css'
 
 // The "Recent posts" box beside the tabs: the newest posts from every category.
 function RecentPosts({ title, posts = [], postHref, blogHref, viewAllLabel, emptyText }) {
+  const { language } = useLanguage()
   return (
     <aside className={styles.box}>
       <div className={styles.header}>
@@ -24,7 +26,7 @@ function RecentPosts({ title, posts = [], postHref, blogHref, viewAllLabel, empt
               <SmartImage className={styles.thumb} src={post.image} alt="" />
               <span className={styles.text}>
                 <span className={styles.postTitle}>{post.title}</span>
-                {post.publishedAt && <span className={styles.date}><FaRegCalendarDays aria-hidden="true" /> {postDate(post)}</span>}
+                {post.publishedAt && <span className={styles.date}><FaRegCalendarDays aria-hidden="true" /> {postDate(post, language)}</span>}
               </span>
             </Link>
           </li>

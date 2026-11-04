@@ -1,5 +1,6 @@
 import app from './app.js';
 import { connectDB } from './db.js';
+import { startAutoTranslation } from './services/translationService.js';
 import { hasTwoFactorKey } from './utils/secretBox.js';
 
 // AWS may need a different port than local development, so it must be configurable.
@@ -19,6 +20,9 @@ try {
   console.error('Could not connect to MongoDB:', err.message);
   process.exit(1);
 }
+
+// Here and not in app.js, so tests can never send anything to Google.
+startAutoTranslation();
 
 // Kept apart from app.js so tests can use the app without opening a real port.
 // HOST=127.0.0.1 on the live server, so only Caddy can reach Node and port 4000 isn't public.

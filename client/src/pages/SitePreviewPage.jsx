@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import Breadcrumbs from '../components/Breadcrumbs.jsx'
+import LanguageScope from '../components/LanguageScope.jsx'
 import { useLatestPosts } from '../hooks/useLatestPosts.js'
 import { getSiteContent } from '../services/api.js'
 import { templateLayouts } from '../templates/registry.js'
@@ -25,7 +26,7 @@ function SitePreviewPage() {
   const Layout = templateLayouts[site.templateSlug]
 
   return (
-    <>
+    <LanguageScope language={site.language}>
       <div className={styles.bar}>
         <Breadcrumbs
           look="light"
@@ -54,7 +55,7 @@ function SitePreviewPage() {
           postHref={(post) => `/sites/${id}/blog/preview/${post._id}`}
         />
       ) : <p>No layout exists for this template yet.</p>}
-    </>
+    </LanguageScope>
   )
 }
 

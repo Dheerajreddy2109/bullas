@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import Breadcrumbs from '../components/Breadcrumbs.jsx'
+import LanguageScope from '../components/LanguageScope.jsx'
+import SiteLanguageField from '../components/editor/SiteLanguageField.jsx'
 import ContentEditor from '../components/editor/ContentEditor.jsx'
 import TemplatePicker from '../components/editor/TemplatePicker.jsx'
 import ScopeLink from '../components/ScopeLink.jsx'
@@ -75,15 +77,17 @@ function SiteEditorPage() {
     const Layout = templateLayouts[templateSlug]
     if (!Layout) return <p>No preview exists for this template yet.</p>
     return (
-      <Layout
-        content={previewContent}
-        latestPosts={latestPosts}
-        blogHref={scope.blogPreviewHref}
-        // Owners' previews link to their real blog; the admin's link to the blog preview.
-        postHref={(post) =>
-          scope.previewIsExternal ? `/blog/${encodeURIComponent(post.slug)}` : `${scope.blogPreviewHref}/${post._id}`
-        }
-      />
+      <LanguageScope language={site.language}>
+        <Layout
+          content={previewContent}
+          latestPosts={latestPosts}
+          blogHref={scope.blogPreviewHref}
+          // Owners' previews link to their real blog; the admin's link to the blog preview.
+          postHref={(post) =>
+            scope.previewIsExternal ? `/blog/${encodeURIComponent(post.slug)}` : `${scope.blogPreviewHref}/${post._id}`
+          }
+        />
+      </LanguageScope>
     )
   }
 
@@ -129,6 +133,7 @@ function SiteEditorPage() {
           {saveError}
         </p>
       )}
+      <SiteLanguageField siteId={id} value={site.language} onChange={(language) => setSite({ ...site, language })} />
       {picking ? (
         <TemplatePicker
           siteId={id}

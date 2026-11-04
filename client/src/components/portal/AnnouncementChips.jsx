@@ -1,15 +1,20 @@
 import { ANNOUNCEMENT_CATEGORIES } from './announcementCategories.js'
+import { useLanguage } from '../../hooks/useLanguage.js'
 import styles from '../../css/portal/AnnouncementChips.module.css'
 
 // "All" plus one chip for each category that has announcements. value '' means all of them.
 function AnnouncementChips({ categories, value, onChange }) {
+  const { labels } = useLanguage()
   const chips = [
-    { value: '', label: 'అన్నీ' },
-    ...ANNOUNCEMENT_CATEGORIES.filter((item) => categories.includes(item.value)),
+    { value: '', label: labels.all },
+    ...ANNOUNCEMENT_CATEGORIES.filter((item) => categories.includes(item.value)).map((item) => ({
+      value: item.value,
+      label: labels[`ann_${item.value}`],
+    })),
   ]
 
   return (
-    <div className={styles.chips} role="group" aria-label="వర్గం ఎంచుకోండి">
+    <div className={styles.chips} role="group" aria-label={labels.chooseCategory}>
       {chips.map((chip) => (
         <button
           key={chip.value || 'all'}

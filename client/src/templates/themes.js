@@ -11,14 +11,26 @@ import '@fontsource/anek-telugu/600.css'
 import '@fontsource/anek-telugu/700.css'
 import '@fontsource/anek-telugu/800.css'
 import '@fontsource/mandali/400.css'
+import '@fontsource/noto-sans-tamil/400.css'
+import '@fontsource/noto-sans-tamil/700.css'
+import '@fontsource/noto-sans-oriya/400.css'
+import '@fontsource/noto-sans-oriya/700.css'
+import '@fontsource/noto-sans-devanagari/400.css'
+import '@fontsource/noto-sans-devanagari/700.css'
+import '@fontsource/noto-sans-malayalam/400.css'
+import '@fontsource/noto-sans-malayalam/700.css'
 
-const FALLBACK_FONTS = "'Noto Sans Telugu', system-ui, sans-serif"
+// Each theme's own font covers Telugu and English; the browser takes other scripts from these.
+const OTHER_SCRIPTS = "'Noto Sans Tamil', 'Noto Sans Oriya', 'Noto Sans Devanagari', 'Noto Sans Malayalam'"
+const FALLBACK_FONTS = `'Noto Sans Telugu', ${OTHER_SCRIPTS}, system-ui, sans-serif`
 
 const THEMES = {
   // Bright and colourful, like the reference village portal.
   'panchayat-classic': {
     look: 'classic',
     vars: {
+      // How far this theme's body font sits its letters from the middle of their line.
+      '--text-nudge': '0.17em',
       '--font-heading': `'Ramabhadra', ${FALLBACK_FONTS}`,
       '--font-body': `'Anek Telugu', ${FALLBACK_FONTS}`,
       '--heading-weight': '400',
@@ -60,8 +72,10 @@ const THEMES = {
   'portfolio-light': {
     look: 'heritage',
     vars: {
-      '--font-heading': `'Tiro Telugu', serif`,
-      '--font-body': `'Tiro Telugu', serif`,
+      // How far this theme's body font sits its letters from the middle of their line.
+      '--text-nudge': '0.04em',
+      '--font-heading': `'Tiro Telugu', ${OTHER_SCRIPTS}, serif`,
+      '--font-body': `'Tiro Telugu', ${OTHER_SCRIPTS}, serif`,
       '--heading-weight': '400',
       '--ink': '#5b1414',
       '--text': '#3f2a1d',
@@ -101,6 +115,8 @@ const THEMES = {
   'business-starter': {
     look: 'modern',
     vars: {
+      // How far this theme's body font sits its letters from the middle of their line.
+      '--text-nudge': '0.17em',
       '--font-heading': `'Anek Telugu', ${FALLBACK_FONTS}`,
       '--font-body': `'Anek Telugu', ${FALLBACK_FONTS}`,
       '--heading-weight': '700',
@@ -141,6 +157,8 @@ const THEMES = {
   'local-shop': {
     look: 'green',
     vars: {
+      // How far this theme's body font sits its letters from the middle of their line.
+      '--text-nudge': '-0.06em',
       '--font-heading': `'Anek Telugu', ${FALLBACK_FONTS}`,
       '--font-body': `'Mandali', ${FALLBACK_FONTS}`,
       '--heading-weight': '800',

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import SectionBlock from '../sections/SectionBlock.jsx'
 import MemberCard from './MemberCard.jsx'
 import ViewAllButton from './ViewAllButton.jsx'
+import { useLanguage } from '../../hooks/useLanguage.js'
 import styles from '../../css/portal/MembersSection.module.css'
 
 // One row of elders fits on a laptop screen; the rest open with "View all".
@@ -9,6 +10,7 @@ const FIRST_ROW = 7
 
 function MembersSection({ number, title, people = [] }) {
   const [expanded, setExpanded] = useState(false)
+  const { labels } = useLanguage()
   const shown = expanded ? people : people.slice(0, FIRST_ROW)
   const canExpand = people.length > FIRST_ROW
 
@@ -23,7 +25,7 @@ function MembersSection({ number, title, people = [] }) {
           <ViewAllButton
             expanded={expanded}
             onToggle={() => setExpanded((current) => !current)}
-            label="అందరు సభ్యులను చూడండి"
+            label={labels.viewAllMembers}
           />
         )
       }

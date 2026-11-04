@@ -1,9 +1,11 @@
 import { FaArrowRight, FaArrowUp } from 'react-icons/fa6'
+import { useLanguage } from '../../hooks/useLanguage.js'
 import styles from '../../css/portal/ViewAllButton.module.css'
 
 // "View all →" / "Show less" for sections that show only their first few items.
 // A button, not a link, because it opens more of this page instead of going somewhere else.
-function ViewAllButton({ expanded, onToggle, label, lessLabel = 'తక్కువ చూపించు', small = false }) {
+function ViewAllButton({ expanded, onToggle, label, small = false }) {
+  const { labels } = useLanguage()
   return (
     <button
       className={`${styles.button} ${small ? styles.small : ''}`}
@@ -11,7 +13,7 @@ function ViewAllButton({ expanded, onToggle, label, lessLabel = 'తక్కు
       aria-expanded={expanded}
       onClick={onToggle}
     >
-      {expanded ? lessLabel : label}
+      {expanded ? labels.showLess : label}
       {expanded ? <FaArrowUp aria-hidden="true" /> : <FaArrowRight aria-hidden="true" />}
     </button>
   )

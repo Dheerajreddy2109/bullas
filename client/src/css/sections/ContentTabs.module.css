@@ -6,7 +6,7 @@
 }
 
 .tab {
-  padding: var(--space-2) var(--space-4);
+  padding: calc(var(--space-2) + var(--text-nudge, 0px)) var(--space-4) calc(var(--space-2) - var(--text-nudge, 0px));
   font: inherit;
   font-weight: 700;
   color: var(--ink);

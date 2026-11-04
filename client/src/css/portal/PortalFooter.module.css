@@ -114,3 +114,9 @@
     justify-content: center;
   }
 }
+
+/* Honest about machine translation, which can get names and details wrong. */
+.note {
+  margin: 4px 0 0;
+  font-size: var(--text-xs);
+}

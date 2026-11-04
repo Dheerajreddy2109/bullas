@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import BlogPost from '../../models/BlogPost.js';
+import { scheduleSiteTranslation } from '../services/translationService.js';
 import { categoryFilter, readPage, readPostInput, slugify } from '../utils/blogRules.js';
 import { ContentError } from '../utils/sanitizeContent.js';
 import { scoped } from '../utils/scoped.js';
@@ -84,6 +85,8 @@ export async function updatePost(req, res) {
   try {
     Object.assign(post, readPostInput(req.body, req.managedSite._id.toString(), { creating: false }));
     await post.save();
+    // Drafts stay private; a published post's new wording needs translating.
+    if (post.status === 'published') scheduleSiteTranslation(req.managedSite._id);
     res.json(post);
   } catch (err) {
     if (!sendInputError(err, res)) throw err;
@@ -103,6 +106,7 @@ export async function setPostStatus(req, res) {
   // Set once, so unpublishing and republishing keeps the post's original date.
   if (status === 'published' && !post.publishedAt) post.publishedAt = new Date();
   await post.save();
+  if (status === 'published') scheduleSiteTranslation(req.managedSite._id);
   res.json(post);
 }
 

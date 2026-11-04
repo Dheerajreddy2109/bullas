@@ -2,7 +2,7 @@
   display: inline-flex;
   gap: 8px;
   align-items: center;
-  padding: 8px 18px;
+  padding: calc(8px + var(--text-nudge, 0px)) 18px calc(8px - var(--text-nudge, 0px));
   font: inherit;
   font-weight: 700;
   color: #fff;
@@ -18,7 +18,7 @@
 }
 
 .small {
-  padding: 6px 14px;
+  padding: calc(6px + var(--text-nudge, 0px)) 14px calc(6px - var(--text-nudge, 0px));
   font-size: var(--text-sm);
 }
 
@@ -30,4 +30,9 @@
 
 :global([data-look='green']) .button {
   border-radius: 999px;
+}
+
+/* The text is nudged by each theme's font, so the arrow is moved back to line up. */
+.button svg {
+  transform: translateY(calc(var(--text-nudge, 0px) * -1));
 }

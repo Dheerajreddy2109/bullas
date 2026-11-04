@@ -5,7 +5,7 @@
 }
 
 .chip {
-  padding: 4px 14px;
+  padding: calc(4px + var(--text-nudge, 0px)) 14px calc(4px - var(--text-nudge, 0px));
   font: inherit;
   font-size: var(--text-sm);
   font-weight: 700;

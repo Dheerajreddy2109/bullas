@@ -1,13 +1,15 @@
 import { FaEnvelope, FaLocationDot, FaPhone } from 'react-icons/fa6'
+import { useLanguage } from '../../hooks/useLanguage.js'
 import { telHref } from '../../templates/contentHelpers.js'
 import styles from '../../css/sections/ContactBlock.module.css'
 
 // Empty fields are skipped, so a new site never shows blank phone or email cards.
 function ContactBlock({ address, phone, email }) {
+  const { labels } = useLanguage()
   const items = [
-    address && { Icon: FaLocationDot, label: 'చిరునామా', value: address },
-    phone && { Icon: FaPhone, label: 'ఫోన్', value: phone, href: telHref(phone) },
-    email && { Icon: FaEnvelope, label: 'ఈమెయిల్', value: email, href: `mailto:${email}` },
+    address && { Icon: FaLocationDot, label: labels.address, value: address },
+    phone && { Icon: FaPhone, label: labels.phone, value: phone, href: telHref(phone) },
+    email && { Icon: FaEnvelope, label: labels.email, value: email, href: `mailto:${email}` },
   ].filter(Boolean)
 
   return (

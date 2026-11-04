@@ -1,14 +1,16 @@
 import { detectImageType } from '../middleware/uploadImage.js';
+import { scheduleSiteTranslation } from '../services/translationService.js';
 import { countSiteImages, saveSiteImage } from '../services/imageStorage.js';
 import Template from '../../models/Template.js';
 import { ContentError, sanitizeContent } from '../utils/sanitizeContent.js';
+import { SITE_LANGUAGES } from '../utils/languages.js';
 import { switchTemplateContent } from '../utils/templateSwitch.js';
 
 const MAX_IMAGES_PER_SITE = 200;
 
 export function getSiteContent(req, res) {
-  const { _id, name, subdomain, status, templateId, content } = req.managedSite;
-  res.json({ _id, name, subdomain, status, templateSlug: templateId?.slug, content });
+  const { _id, name, subdomain, status, templateId, content, language } = req.managedSite;
+  res.json({ _id, name, subdomain, status, templateSlug: templateId?.slug, content, language });
 }
 
 export async function updateSiteContent(req, res) {
@@ -37,7 +39,20 @@ export async function updateSiteContent(req, res) {
   // Mongoose can't see changes inside a flexible field unless told.
   site.markModified('content');
   await site.save();
+  scheduleSiteTranslation(site._id);
   res.json({ content });
+}
+
+// The language the owner writes in. Everything else is translated from it.
+export async function updateSiteLanguage(req, res) {
+  const { language } = req.body ?? {};
+  if (!SITE_LANGUAGES.includes(language)) {
+    return res.status(400).json({ error: 'Choose a language from the list' });
+  }
+  req.managedSite.language = language;
+  await req.managedSite.save();
+  scheduleSiteTranslation(req.managedSite._id);
+  res.json({ language });
 }
 
 // The templates a site can switch to. Owners can't use the admin-only template list, so this is per site.
@@ -92,6 +107,7 @@ export async function changeSiteTemplate(req, res) {
     site.markModified('content');
     site.markModified('contentArchive');
     await site.save();
+    scheduleSiteTranslation(site._id);
   }
 
   res.json({

@@ -31,10 +31,13 @@ function sendJson(method, path, body = {}) {
 export const getServerHealth = () => request('/api/health')
 
 // Public site calls: the server works out which site from the address, so no ID is sent.
-export const getPublicSite = () => request('/api/site')
-export const getPublicBlog = (page = 1, limit = 10, category = '') =>
-  request(`/api/site/blog?${new URLSearchParams({ page, limit, ...(category && { category }) })}`)
-export const getPublicPost = (slug) => request(`/api/site/blog/${encodeURIComponent(slug)}`)
+export const getPublicSite = (language) => request(`/api/site${language ? `?lang=${language}` : ''}`)
+export const getPublicBlog = (page = 1, limit = 10, category = '', language = '') =>
+  request(
+    `/api/site/blog?${new URLSearchParams({ page, limit, ...(category && { category }), ...(language && { lang: language }) })}`,
+  )
+export const getPublicPost = (slug, language) =>
+  request(`/api/site/blog/${encodeURIComponent(slug)}${language ? `?lang=${language}` : ''}`)
 
 export const login = (email, password) => sendJson('POST', '/api/auth/login', { email, password })
 export const logout = () => sendJson('POST', '/api/auth/logout')
@@ -81,6 +84,8 @@ export const updateSiteStatus = (id, status) =>
   sendJson('PATCH', `/api/sites/${encodeURIComponent(id)}/status`, { status })
 
 export const getSiteContent = (id) => request(`/api/sites/${encodeURIComponent(id)}/content`)
+export const updateSiteLanguage = (id, language) =>
+  sendJson('PUT', `/api/sites/${encodeURIComponent(id)}/language`, { language })
 export const saveSiteContent = (id, content) =>
   sendJson('PUT', `/api/sites/${encodeURIComponent(id)}/content`, { content })
 // Per site, so owners can use them too. With dryRun the server only returns a preview.

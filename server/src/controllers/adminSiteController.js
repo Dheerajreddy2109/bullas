@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import Site from '../../models/Site.js';
 import Template from '../../models/Template.js';
 import User from '../../models/User.js';
+import { scheduleSiteTranslation } from '../services/translationService.js';
 import { canManageSite } from '../utils/canManageSite.js';
 import { passwordProblem } from '../utils/passwordRules.js';
 
@@ -143,6 +144,7 @@ export async function updateSiteStatus(req, res) {
 
   site.status = status;
   await site.save();
+  if (status === 'published') scheduleSiteTranslation(site._id);
   res.json(summarize(site));
 }
 

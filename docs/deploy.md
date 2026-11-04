@@ -244,6 +244,14 @@ Watch the log for `certificate obtained successfully` for `*.bullas.in`. Press `
 
 ## 14. Check everything
 
+**Check the server's clock first.** Two-factor codes stop working the moment their timer ends, so if this clock is even a few seconds out, correct codes get refused. Run:
+
+```bash
+timedatectl
+```
+
+It should say `System clock synchronized: yes`. If it says `no`, turn it on with `sudo timedatectl set-ntp true`.
+
 From your Mac:
 
 ```bash

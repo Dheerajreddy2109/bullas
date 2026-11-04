@@ -2,18 +2,20 @@ import { FaPhone, FaRegCalendarDays } from 'react-icons/fa6'
 import SmartImage from '../sections/SmartImage.jsx'
 import { telHref } from '../../templates/contentHelpers.js'
 import { categoryInfo } from './announcementCategories.js'
+import { useLanguage } from '../../hooks/useLanguage.js'
 import styles from '../../css/portal/AnnouncementCard.module.css'
 
 // One announcement. Each category has its own colours; birthdays and weddings use a round photo,
 // because they show people, while business and job notices use a wide picture.
 function AnnouncementCard({ item }) {
   const category = categoryInfo(item.category)
+  const { labels } = useLanguage()
   const isPeople = category.value === 'birthday' || category.value === 'wedding'
 
   return (
     <article className={`${styles.card} ${styles[category.value]}`}>
       <span className={styles.badge}>
-        <category.Icon aria-hidden="true" /> {category.label}
+        <category.Icon aria-hidden="true" /> {labels[`ann_${category.value}`]}
       </span>
       <SmartImage
         className={isPeople ? styles.roundPhoto : styles.widePhoto}

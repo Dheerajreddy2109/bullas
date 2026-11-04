@@ -23,7 +23,7 @@ function TwoFactorCodeForm({ onBack }) {
 
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
-      <p className={styles.text}>Open your authenticator app and enter the 6-digit code for Bullas.</p>
+      <p className={styles.text}>Open your authenticator app and enter the 6-digit code for Bullas. A code stops working when its timer ends, so if it's about to change, wait for the next one.</p>
       <label className={styles.label}>
         Code
         <input
