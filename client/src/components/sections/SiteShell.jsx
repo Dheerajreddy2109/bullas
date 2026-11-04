@@ -2,7 +2,7 @@ import Container from './Container.jsx'
 import PortalFooter from '../portal/PortalFooter.jsx'
 import PortalBanner from '../portal/PortalBanner.jsx'
 import PortalTopBar from '../portal/PortalTopBar.jsx'
-import { readContent, safeColor } from '../../templates/contentHelpers.js'
+import { blogAwareHref, readContent, safeColor } from '../../templates/contentHelpers.js'
 import { lookFor } from '../../templates/templateStyles.js'
 import { themeFor } from '../../templates/themes.js'
 import styles from '../../css/sections/SiteShell.module.css'
@@ -16,7 +16,9 @@ function SiteShell({ site, homeHref = '/', blogHref = '/blog', children }) {
   // Menu links like #members point at home page sections, so they must lead back there.
   const menu = [
     ...(c.menu?.items ?? []).map((item) =>
-      item.href?.startsWith('#') ? { ...item, href: `${homeHref}${item.href}` } : item,
+      item.href?.startsWith('#')
+        ? { ...item, href: `${homeHref}${item.href}` }
+        : { ...item, href: blogAwareHref(item.href, blogHref) },
     ),
     { label: look.blogLabel, href: blogHref },
   ]
@@ -36,8 +38,7 @@ function SiteShell({ site, homeHref = '/', blogHref = '/blog', children }) {
         village={c.topBar?.village}
         social={c.topBar?.social}
       />
-      {/* Compact on blog pages, so the post is visible without scrolling past the leaders. */}
-      <PortalBanner village={c.village} logo={c.branding?.logo} menu={menu} compact />
+      <PortalBanner village={c.village} logo={c.branding?.logo} menu={menu} />
       <main className={styles.main}>
         <Container>{children}</Container>
       </main>

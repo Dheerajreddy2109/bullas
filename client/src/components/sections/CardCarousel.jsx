@@ -1,4 +1,5 @@
 import { Children, useEffect, useRef, useState } from 'react'
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa6'
 import styles from '../../css/sections/CardCarousel.module.css'
 
 // A sideways row of cards. Arrows move one card at a time and disappear at each end,
@@ -44,14 +45,14 @@ function CardCarousel({ children, label = 'Cards' }) {
   return (
     <div className={styles.carousel} role="group" aria-label={label}>
       <button className={styles.arrow} type="button" aria-label="Previous" disabled={!canPrev} onClick={() => scroll(-1)}>
-        ‹
+        <FaChevronLeft aria-hidden="true" />
       </button>
       {/* tabIndex lets keyboard users focus the row and move it with the arrow keys. */}
       <div className={styles.track} ref={trackRef} tabIndex={0}>
         {children}
       </div>
       <button className={styles.arrow} type="button" aria-label="Next" disabled={!canNext} onClick={() => scroll(1)}>
-        ›
+        <FaChevronRight aria-hidden="true" />
       </button>
     </div>
   )

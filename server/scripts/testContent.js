@@ -270,7 +270,7 @@ try {
   check(
     'a list that is too long gets 400',
     (await save((c) => {
-      section(c, 'gallery').fields.images.value = Array(51).fill({ caption: 'x', image: '' });
+      section(c, 'members').fields.people.value = Array(51).fill({ role: 'x', name: 'x', phone: '', photo: '' });
     })).status === 400
   );
 

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import Breadcrumbs from '../components/Breadcrumbs.jsx'
+import BlogCategoryTabs from '../components/blog/BlogCategoryTabs.jsx'
 import BlogList from '../components/sections/BlogList.jsx'
 import BlogPostView from '../components/sections/BlogPostView.jsx'
 import SiteShell from '../components/sections/SiteShell.jsx'
@@ -15,10 +16,12 @@ function BlogPreviewPage() {
   const [site, setSite] = useState(null)
   const [result, setResult] = useState(null)
   const [post, setPost] = useState(null)
-  const [page, setPage] = useState(1)
+  const [paging, setPaging] = useState({ category: '', page: 1 })
   const [error, setError] = useState('')
   const [searchParams] = useSearchParams()
   const category = POST_CATEGORIES.find((item) => item.value === searchParams.get('category'))
+  // The page number belongs to one tab; a different tab starts again at page 1.
+  const page = paging.category === (category?.value ?? '') ? paging.page : 1
 
   useEffect(() => {
     getSiteContent(id)
@@ -85,7 +88,8 @@ function BlogPreviewPage() {
               homeLabel={look.homeLabel}
               items={[{ label: look.homeLabel, to: `/sites/${id}/preview` }, { label: look.blogLabel }]}
             />
-            <h2 className={styles.heading}>{look.blogHeading}</h2>
+            <h2 className={styles.heading}>{category ? category.telugu : look.blogHeading}</h2>
+            <BlogCategoryTabs blogHref={listHref} active={category?.value} />
             {result && (
               <>
                 <BlogList
@@ -93,7 +97,11 @@ function BlogPreviewPage() {
                   postHref={(item) => `${listHref}/${item._id}`}
                   emptyText={look.emptyText}
                 />
-                <Pagination page={result.page} totalPages={result.totalPages} onChange={setPage} />
+                <Pagination
+                  page={result.page}
+                  totalPages={result.totalPages}
+                  onChange={(next) => setPaging({ category: category?.value ?? '', page: next })}
+                />
               </>
             )}
           </>

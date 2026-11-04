@@ -8,8 +8,7 @@ import styles from '../../css/blog/BlogPostsTable.module.css'
 const formatDate = (value) => (value ? new Date(value).toLocaleDateString() : '-')
 
 // previewHref gives a post's preview address, or null when it can't be previewed yet.
-// previewExternal opens it in a new tab, for owners whose preview is their real website.
-function BlogPostsTable({ editBase, posts, busyId, onToggleStatus, onDelete, previewHref, previewExternal }) {
+function BlogPostsTable({ editBase, posts, busyId, onToggleStatus, onDelete, previewHref }) {
   // An in-page confirm rather than a browser pop-up, which can't be styled or tested easily.
   const [confirmId, setConfirmId] = useState(null)
 
@@ -50,7 +49,7 @@ function BlogPostsTable({ editBase, posts, busyId, onToggleStatus, onDelete, pre
                   Edit
                 </Link>
                 {previewHref(post) ? (
-                  <ScopeLink className={styles.button} to={previewHref(post)} external={previewExternal}>
+                  <ScopeLink className={styles.button} to={previewHref(post)}>
                     Preview
                   </ScopeLink>
                 ) : (

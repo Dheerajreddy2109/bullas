@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useOutletContext, useSearchParams } from 'react-router-dom'
 import Breadcrumbs from '../../components/Breadcrumbs.jsx'
+import BlogCategoryTabs from '../../components/blog/BlogCategoryTabs.jsx'
 import BlogList from '../../components/sections/BlogList.jsx'
 import SiteShell from '../../components/sections/SiteShell.jsx'
 import Pagination from '../../components/Pagination.jsx'
@@ -38,6 +39,7 @@ function PublicBlogPage() {
         ]}
       />
       <h2 className={styles.heading}>{category ? category.telugu : look.blogHeading}</h2>
+      <BlogCategoryTabs blogHref="/blog" active={category?.value} />
       {error && <p role="alert">{error}</p>}
       {result && (
         <>

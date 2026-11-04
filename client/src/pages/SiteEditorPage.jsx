@@ -115,7 +115,7 @@ function SiteEditorPage() {
           )}
           {/* Hidden while there are unsaved edits, because the preview shows saved content only. */}
           {!dirty && (
-            <ScopeLink className={styles.previewLink} to={scope.previewHref} external={scope.previewIsExternal}>
+            <ScopeLink className={styles.previewLink} to={scope.previewHref}>
               Preview site
             </ScopeLink>
           )}

@@ -1,3 +1,4 @@
+import { FaArrowRight, FaArrowUp } from 'react-icons/fa6'
 import styles from '../../css/portal/ViewAllButton.module.css'
 
 // "View all →" / "Show less" for sections that show only their first few items.
@@ -11,7 +12,7 @@ function ViewAllButton({ expanded, onToggle, label, lessLabel = 'తక్కు
       onClick={onToggle}
     >
       {expanded ? lessLabel : label}
-      <span aria-hidden="true">{expanded ? '↑' : '→'}</span>
+      {expanded ? <FaArrowUp aria-hidden="true" /> : <FaArrowRight aria-hidden="true" />}
     </button>
   )
 }

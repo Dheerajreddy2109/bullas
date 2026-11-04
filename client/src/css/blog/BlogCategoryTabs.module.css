@@ -1,0 +1,42 @@
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-5);
+}
+
+/* The same look as the home page's Posts tabs, so both feel like one feature. */
+.tab {
+  padding: var(--space-2) var(--space-4);
+  font-weight: 700;
+  color: var(--ink);
+  text-decoration: none;
+  background: var(--surface, #fff);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+}
+
+.tab:hover {
+  border-color: var(--brand);
+}
+
+.active {
+  color: #fff;
+  background: var(--brand);
+  border-color: var(--brand);
+}
+
+:global([data-look='heritage']) .tab {
+  border-color: #e3c27a;
+  border-radius: 6px;
+}
+
+:global([data-look='heritage']) .active {
+  color: #f6d27a;
+  background: var(--number-bg);
+  border-color: #d4a64a;
+}
+
+:global([data-look='modern']) .tab {
+  border-radius: 8px;
+}

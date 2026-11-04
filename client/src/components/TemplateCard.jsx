@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import ScopeLink from './ScopeLink.jsx'
 import styles from '../css/TemplateCard.module.css'
 
 function TemplateCard({ template }) {
@@ -19,9 +19,9 @@ function TemplateCard({ template }) {
       <div className={styles.body}>
         <h2 className={styles.name}>{template.name}</h2>
         <p className={styles.description}>{template.description}</p>
-        <Link className={styles.button} to={previewPath}>
+        <ScopeLink className={styles.button} to={previewPath}>
           Preview
-        </Link>
+        </ScopeLink>
       </div>
     </article>
   )

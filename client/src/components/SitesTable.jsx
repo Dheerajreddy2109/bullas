@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import ScopeLink from './ScopeLink.jsx'
 import styles from '../css/SitesTable.module.css'
 
 const formatDate = (value) => new Date(value).toLocaleDateString()
@@ -67,9 +68,9 @@ function SitesTable({ sites, busyId, onToggleStatus, isSuperAdmin, builders = []
                 <Link className={styles.button} to={`/sites/${site._id}/blog`}>
                   Blog
                 </Link>
-                <Link className={styles.button} to={`/sites/${site._id}/preview`}>
+                <ScopeLink className={styles.button} to={`/sites/${site._id}/preview`}>
                   Preview
-                </Link>
+                </ScopeLink>
                 {isSuperAdmin && (
                   <Link className={styles.button} to={`/sites/${site._id}/domain`}>
                     Domain

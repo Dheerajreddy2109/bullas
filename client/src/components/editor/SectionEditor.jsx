@@ -28,6 +28,8 @@ function SectionEditor({ section, siteId, onFieldChange }) {
               label={field.label}
               value={field.value}
               itemFields={field.itemFields}
+              // Only the site menu picks links from a list; social links are always outside websites.
+              menuLinks={section.key === 'menu'}
               siteId={siteId}
               onChange={(value) => onFieldChange(key, value)}
             />

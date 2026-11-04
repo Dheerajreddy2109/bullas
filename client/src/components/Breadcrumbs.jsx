@@ -1,3 +1,4 @@
+import { FaHouse } from 'react-icons/fa6'
 import { Link } from 'react-router-dom'
 import styles from '../css/Breadcrumbs.module.css'
 
@@ -16,9 +17,7 @@ function Breadcrumbs({ items, look = 'admin', homeLabel }) {
           const isHome = index === 0 && !homeLabel
           const label = isHome ? (
             <>
-              <svg className={styles.home} viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M3 11l9-7 9 7v9a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1v-9z" />
-              </svg>
+              <FaHouse className={styles.home} aria-hidden="true" />
               <span className={styles.srOnly}>{item.label}</span>
             </>
           ) : index === 0 ? (

@@ -62,10 +62,10 @@ function BlogPostsPage() {
       <div className={styles.header}>
         <h1 className={styles.title}>Blog{siteName && `: ${siteName}`}</h1>
         <div className={styles.links}>
-          <ScopeLink className={styles.secondary} to={scope.previewHref} external={scope.previewIsExternal}>
+          <ScopeLink className={styles.secondary} to={scope.previewHref}>
             Preview site
           </ScopeLink>
-          <ScopeLink className={styles.secondary} to={scope.blogPreviewHref} external={scope.previewIsExternal}>
+          <ScopeLink className={styles.secondary} to={scope.blogPreviewHref}>
             Preview blog
           </ScopeLink>
           <Link className={styles.primary} to={`${scope.base}/blog/new`}>
@@ -91,7 +91,6 @@ function BlogPostsPage() {
                 ? post.status === 'published' && `/blog/${encodeURIComponent(post.slug)}`
                 : `${scope.blogPreviewHref}/${post._id}`
             }
-            previewExternal={scope.previewIsExternal}
             posts={result.posts}
             busyId={busyId}
             onToggleStatus={toggleStatus}

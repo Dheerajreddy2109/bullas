@@ -9,7 +9,8 @@ import PortalTopBar from '../components/portal/PortalTopBar.jsx'
 import ContactBlock from '../components/sections/ContactBlock.jsx'
 import Container from '../components/sections/Container.jsx'
 import SectionBlock from '../components/sections/SectionBlock.jsx'
-import { readContent, safeColor } from './contentHelpers.js'
+import { useScrollToHash } from '../hooks/useScrollToHash.js'
+import { blogAwareHref, readContent, safeColor } from './contentHelpers.js'
 import { lookFor } from './templateStyles.js'
 import { themeFor } from './themes.js'
 import styles from '../css/VillagePortalLayout.module.css'
@@ -27,6 +28,8 @@ function VillagePortalLayout({
   blogHref = '/blog',
   postHref = defaultPostHref,
 }) {
+  // The Posts section grows when posts arrive, which moves everything below it.
+  useScrollToHash(latestPosts.length)
   const look = lookFor(templateSlug)
   const theme = themeFor(templateSlug)
   const c = readContent(content)
@@ -42,6 +45,10 @@ function VillagePortalLayout({
     'contact',
   ].filter(Boolean)
   const numberOf = (id) => order.indexOf(id) + 1
+  const menu = [
+    ...(c.menu?.items ?? []).map((item) => ({ ...item, href: blogAwareHref(item.href, blogHref) })),
+    ...extraMenu,
+  ]
 
   return (
     <div className={styles.site} data-look={theme.look} style={{ ...theme.vars, '--brand': brand }}>
@@ -52,7 +59,7 @@ function VillagePortalLayout({
         village={c.topBar?.village}
         social={c.topBar?.social}
       />
-      <PortalBanner village={c.village} logo={c.branding?.logo} menu={[...(c.menu?.items ?? []), ...extraMenu]} />
+      <PortalBanner village={c.village} logo={c.branding?.logo} menu={menu} />
       <Container className={styles.sections}>
         <MembersSection number={numberOf('members')} title={c.members?.title} people={c.members?.people} />
 
@@ -78,7 +85,6 @@ function VillagePortalLayout({
         <PostsSection
           number={numberOf('posts')}
           about={c.about}
-          gallery={c.gallery}
           posts={latestPosts}
           postHref={postHref}
           blogHref={blogHref}
@@ -102,7 +108,7 @@ function VillagePortalLayout({
         villageName={c.village?.name}
         footer={c.footer}
         logo={c.branding?.logo}
-        menu={[...(c.menu?.items ?? []), ...extraMenu]}
+        menu={menu}
         social={c.topBar?.social}
       />
     </div>

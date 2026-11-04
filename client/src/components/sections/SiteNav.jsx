@@ -1,8 +1,9 @@
 import { useState } from 'react'
+import { FaBars, FaXmark } from 'react-icons/fa6'
 import { safeHref } from '../../templates/contentHelpers.js'
 import styles from '../../css/sections/SiteNav.module.css'
 
-// The site's menu. On phones it collapses behind a ☰ button instead of wrapping onto many lines.
+// The site's menu. On phones it collapses behind a menu button instead of wrapping onto many lines.
 // look: 'pills' (coloured buttons), 'bar' (on a coloured strip) or 'plain' (quiet text links).
 function SiteNav({ items = [], look = 'pills', label = 'Menu' }) {
   const [open, setOpen] = useState(false)
@@ -15,7 +16,7 @@ function SiteNav({ items = [], look = 'pills', label = 'Menu' }) {
         aria-expanded={open}
         onClick={() => setOpen((current) => !current)}
       >
-        <span aria-hidden="true">{open ? '✕' : '☰'}</span> {label}
+        {open ? <FaXmark aria-hidden="true" /> : <FaBars aria-hidden="true" />} {label}
       </button>
       <ul className={`${styles.list} ${open ? styles.open : ''}`}>
         {items.map((item, index) => (

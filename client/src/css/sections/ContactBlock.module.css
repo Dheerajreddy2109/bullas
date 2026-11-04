@@ -21,7 +21,8 @@
   flex-shrink: 0;
   width: 44px;
   height: 44px;
-  font-size: 20px;
+  font-size: 18px;
+  color: var(--brand);
   background: color-mix(in srgb, var(--brand) 12%, white);
   border-radius: 50%;
 }

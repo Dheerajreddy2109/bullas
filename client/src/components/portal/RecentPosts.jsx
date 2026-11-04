@@ -1,3 +1,4 @@
+import { FaRegCalendarDays } from 'react-icons/fa6'
 import { Link } from 'react-router-dom'
 import SmartImage from '../sections/SmartImage.jsx'
 import { postDate } from './postDate.js'
@@ -23,7 +24,7 @@ function RecentPosts({ title, posts = [], postHref, blogHref, viewAllLabel, empt
               <SmartImage className={styles.thumb} src={post.image} alt="" />
               <span className={styles.text}>
                 <span className={styles.postTitle}>{post.title}</span>
-                {post.publishedAt && <span className={styles.date}>📅 {postDate(post)}</span>}
+                {post.publishedAt && <span className={styles.date}><FaRegCalendarDays aria-hidden="true" /> {postDate(post)}</span>}
               </span>
             </Link>
           </li>

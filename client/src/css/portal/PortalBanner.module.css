@@ -25,11 +25,6 @@
   padding-block: var(--space-6) var(--space-5);
 }
 
-.compact {
-  grid-template-columns: minmax(0, 1fr);
-  padding-block: var(--space-5) var(--space-4);
-}
-
 /* ---------- Leaders ---------- */
 .leader {
   display: flex;
@@ -234,9 +229,5 @@
   .logo {
     width: 64px;
     height: 64px;
-  }
-
-  .compact {
-    grid-template-columns: minmax(0, 1fr);
   }
 }

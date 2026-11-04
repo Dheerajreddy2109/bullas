@@ -55,7 +55,6 @@ function BlogPostEditorPage() {
             {post?.status === 'published' ? (
               <ScopeLink
                 to={scope.previewIsExternal ? `/blog/${encodeURIComponent(post.slug)}` : `${scope.blogPreviewHref}/${post._id}`}
-                external={scope.previewIsExternal}
               >
                 View post
               </ScopeLink>

@@ -1,4 +1,4 @@
-import { branding, choice, contact, image, list, menu, section, text, textarea } from './fields.js';
+import { branding, choice, contact, image, list, menu, section, text } from './fields.js';
 
 // The sections every template shares. Templates differ only in their look (colours, fonts, design),
 // which lives in the browser, so switching templates never loses or hides any content.
@@ -80,15 +80,10 @@ export function villagePortalContent(brandColor) {
           scheme('రాష్ట్ర పథకం 5'),
         ]),
       }),
-      // The key stays "about" so older sites' history and information carry straight over.
-      section('about', 'Village history and posts', {
+      // The tabs below this heading show only blog posts, so the section has just its two headings.
+      // The key stays "about" so sites' saved headings carry straight over.
+      section('about', 'Posts', {
         title: text('Section title', 'పోస్టులు (గ్రామ చరిత్ర, రోజువారీ అప్‌డేట్లు)'),
-        historyTitle: text('History title', 'గ్రామ చరిత్ర'),
-        history: textarea('Village history', 'మీ గ్రామ చరిత్ర, సంస్కృతి, సంప్రదాయాలు మరియు ముఖ్య ప్రదేశాల గురించి ఇక్కడ వ్రాయండి.'),
-        historyImage: image('History image'),
-        infoTitle: text('Information title', 'గ్రామ వివరాలు'),
-        info: textarea('Village information', 'జనాభా, ప్రధాన వృత్తులు, పాఠశాలలు మరియు ఇతర వివరాలు ఇక్కడ వ్రాయండి.'),
-        infoImage: image('Information image'),
         recentTitle: text('Recent posts title', 'తాజా పోస్టులు'),
       }),
       section('events', 'Village events and programs', {
@@ -122,15 +117,6 @@ export function villagePortalContent(brandColor) {
             announcement('others', 'ఇతర ప్రకటన', 'ఇతర సమాచారం ఇక్కడ.'),
           ]
         ),
-      }),
-      section('gallery', 'Photo gallery', {
-        title: text('Section title', 'ఫోటో గ్యాలరీ'),
-        images: list('Photos', { caption: 'text', image: 'image' }, [
-          { caption: 'గ్రామ దృశ్యం', image: '' },
-          { caption: 'పండుగ వేడుకలు', image: '' },
-          { caption: 'గ్రామ సభ', image: '' },
-          { caption: 'అభివృద్ధి పనులు', image: '' },
-        ]),
       }),
       contact('సంప్రదించండి', 'గ్రామ పంచాయతీ కార్యాలయం చిరునామా ఇక్కడ వ్రాయండి'),
       section('footer', 'Footer', {

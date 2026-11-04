@@ -20,7 +20,8 @@
 
 .icon {
   width: 36%;
-  max-width: 44px;
+  max-width: 40px;
+  height: auto;
   fill: currentColor;
 }
 

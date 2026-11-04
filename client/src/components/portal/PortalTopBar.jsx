@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { FaLocationDot } from 'react-icons/fa6'
 import Container from '../sections/Container.jsx'
 import SocialIcons from './SocialIcons.jsx'
 import styles from '../../css/portal/PortalTopBar.module.css'
@@ -16,9 +17,7 @@ function PortalTopBar({ state, district, mandal, village, social }) {
       <Container className={styles.inner}>
         {places.length > 0 && (
           <p className={styles.places}>
-            <svg className={styles.pin} viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 2a7 7 0 00-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 00-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z" />
-            </svg>
+            <FaLocationDot className={styles.pin} aria-hidden="true" />
             {places.map((place, index) => (
               <span key={index} className={styles.place}>
                 {place}

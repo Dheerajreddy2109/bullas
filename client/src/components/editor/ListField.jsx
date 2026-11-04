@@ -1,4 +1,5 @@
 import ImageField from './ImageField.jsx'
+import MenuLinkField from './MenuLinkField.jsx'
 import SelectField from './SelectField.jsx'
 import TextareaField from './TextareaField.jsx'
 import TextField from './TextField.jsx'
@@ -25,7 +26,7 @@ const ITEM_LABELS = {
   platform: 'Platform',
 }
 
-function ListField({ label, itemFields, value = [], siteId, onChange }) {
+function ListField({ label, itemFields, value = [], siteId, menuLinks = false, onChange }) {
   const updateItem = (index, key, nextValue) =>
     onChange(value.map((item, i) => (i === index ? { ...item, [key]: nextValue } : item)))
 
@@ -42,6 +43,16 @@ function ListField({ label, itemFields, value = [], siteId, onChange }) {
       {value.map((item, index) => (
         <div key={index} className={styles.item}>
           {Object.entries(itemFields).map(([key, type]) => {
+            if (menuLinks && key === 'href') {
+              return (
+                <MenuLinkField
+                  key={key}
+                  label={ITEM_LABELS.href}
+                  value={item.href}
+                  onChange={(nextValue) => updateItem(index, key, nextValue)}
+                />
+              )
+            }
             if (type?.type === 'select') {
               return (
                 <SelectField
