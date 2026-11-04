@@ -9,12 +9,13 @@ function OwnerSiteScope() {
   const scope = {
     siteId: user.siteId,
     base: '/admin',
-    backHref: '/admin',
-    backLabel: 'Back to dashboard',
     // The owner's real site is on this same address, so previews open it in a new tab.
     previewHref: '/',
     blogPreviewHref: '/blog',
     previewIsExternal: true,
+    // An owner only has one site, so their trail starts at their dashboard, without a site name.
+    needsSiteName: false,
+    siteCrumbs: () => [{ label: 'Dashboard', to: '/admin' }],
   }
 
   return (

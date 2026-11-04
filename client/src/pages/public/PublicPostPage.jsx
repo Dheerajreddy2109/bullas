@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useOutletContext, useParams } from 'react-router-dom'
+import Breadcrumbs from '../../components/Breadcrumbs.jsx'
 import BlogPostView from '../../components/sections/BlogPostView.jsx'
 import SiteShell from '../../components/sections/SiteShell.jsx'
 import { getPublicPost } from '../../services/api.js'
@@ -25,7 +26,18 @@ function PublicPostPage() {
     <SiteShell site={site}>
       {error?.status === 404 && <p>This post doesn't exist or is no longer published.</p>}
       {error && error.status !== 404 && <p role="alert">{error.message}</p>}
-      {post && <BlogPostView post={post} backHref="/blog" backLabel={look.backLabel} />}
+      {post && (
+        <BlogPostView
+          post={post}
+          breadcrumbs={
+            <Breadcrumbs
+              look="site"
+              homeLabel={look.homeLabel}
+              items={[{ label: look.homeLabel, to: '/' }, { label: look.blogLabel, to: '/blog' }, { label: post.title }]}
+            />
+          }
+        />
+      )}
     </SiteShell>
   )
 }

@@ -240,6 +240,48 @@ try {
 
   const adminList = await asA({ path: `${blogA}?status=draft` });
   check('the admin list can filter drafts', adminList.json?.posts?.every((post) => post.status === 'draft'));
+
+  // Categories
+  const history = await create({ title: 'Temple history', category: 'history' });
+  check('a post can be created with a category', history.status === 201 && history.json?.category === 'history');
+  check('a post without a category is a daily update', first.json?.category === 'daily');
+  check(
+    'an unknown category is refused',
+    (await create({ title: 'Bad category', category: 'videos' })).status === 400
+  );
+  check(
+    'a category that is not text is refused',
+    (await create({ title: 'Bad category', category: { $ne: 'x' } })).status === 400
+  );
+  await publish(history.json._id);
+  // A post saved before categories existed has no category field at all.
+  const legacy = await create({ title: 'Old style post' });
+  await publish(legacy.json._id);
+  await BlogPost.collection.updateOne({ _id: new mongoose.Types.ObjectId(legacy.json._id) }, { $unset: { category: '' } });
+
+  const historyList = await api({ path: '/api/site/blog?category=history', host: HOST_A });
+  check(
+    'the public list filters by category',
+    historyList.status === 200 && historyList.json.posts.length === 1 && historyList.json.posts[0].category === 'history'
+  );
+  const dailyList = await api({ path: '/api/site/blog?category=daily&limit=20', host: HOST_A });
+  check(
+    'a post with no saved category shows under daily updates',
+    dailyList.json?.posts?.some((post) => post.title === 'Old style post')
+  );
+  check('daily updates leave out history posts', !dailyList.json?.posts?.some((post) => post.category === 'history'));
+  check(
+    'a bad category filter gets 400 on the public list',
+    (await api({ path: '/api/site/blog?category=nope', host: HOST_A })).status === 400
+  );
+  check(
+    'a bad category filter gets 400 on the admin list',
+    (await asA({ path: `${blogA}?category=nope` })).status === 400
+  );
+  const recategorised = await asA({ method: 'PUT', path: `${blogA}/${history.json._id}`, body: { category: 'gallery' } });
+  check('the category can be changed', recategorised.status === 200 && recategorised.json?.category === 'gallery');
+  const adminGallery = await asA({ path: `${blogA}?category=gallery` });
+  check('the admin list filters by category', adminGallery.json?.posts?.every((post) => post.category === 'gallery'));
 } catch (err) {
   console.error('Test run failed:', err.message);
   failures += 1;

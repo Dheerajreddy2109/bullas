@@ -3,10 +3,14 @@ import { telHref } from '../../templates/contentHelpers.js'
 import styles from '../../css/sections/InfoCard.module.css'
 
 // The one card used for members, schemes, notices, products and projects.
-function InfoCard({ image, title, overline, lines = [], phone, compact = false, photoLabel }) {
+// variant: 'default' (photo on top), 'person' (round photo, centred) or 'tile' (small square icon).
+// Every card in a row is the same height, and long text is cut off neatly instead of pushing it taller.
+function InfoCard({ image, title, overline, lines = [], phone, variant = 'default', photoLabel }) {
   return (
-    <article className={`${styles.card} ${compact ? styles.compact : ''}`}>
-      <SmartImage className={styles.image} src={image} alt={title} placeholder={photoLabel} />
+    <article className={`${styles.card} ${styles[variant]}`}>
+      <div className={styles.media}>
+        <SmartImage src={image} alt={title} placeholder={variant === 'tile' ? '' : photoLabel} round={variant === 'person'} />
+      </div>
       <div className={styles.body}>
         {overline && <p className={styles.overline}>{overline}</p>}
         <h3 className={styles.title}>{title}</h3>
@@ -17,7 +21,7 @@ function InfoCard({ image, title, overline, lines = [], phone, compact = false, 
         ))}
         {phone && (
           <a className={styles.phone} href={telHref(phone)}>
-            {phone}
+            <span aria-hidden="true">📞</span> {phone}
           </a>
         )}
       </div>

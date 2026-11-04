@@ -19,6 +19,7 @@
 
 .saveArea {
   display: flex;
+  flex-wrap: wrap;
   gap: 12px;
   align-items: center;
 }
@@ -91,4 +92,17 @@
     position: static;
     max-height: 70svh;
   }
+}
+
+/* "Change template" reuses the outlined button look of "Preview site". */
+button.previewLink {
+  font: inherit;
+  font-weight: 600;
+  background: #fff;
+  cursor: pointer;
+}
+
+button.previewLink:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }

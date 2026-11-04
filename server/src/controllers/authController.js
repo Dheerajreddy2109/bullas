@@ -4,6 +4,7 @@ import {
   AUTH_COOKIE,
   TWO_FACTOR_COOKIE,
   isAdminHost,
+  readLoginToken,
   readPendingToken,
   signPendingToken,
   signToken,
@@ -134,7 +135,18 @@ export async function changePassword(req, res) {
   res.json(publicUser(user));
 }
 
-export function logout(req, res) {
+// Ends this account's sessions on every device, not just this browser, as agreed: anyone who
+// logs out can be sure no other computer is still logged in as them.
+export async function logout(req, res) {
+  const payload = readLoginToken(req.cookies?.[AUTH_COOKIE]);
+  // Only a still-valid token raises the version, so an old cookie can't log out a newer session.
+  if (payload) {
+    await User.updateOne(
+      { _id: payload.sub, sessionVersion: payload.sv ?? 0 },
+      { $inc: { sessionVersion: 1 } }
+    );
+  }
+
   res.clearCookie(AUTH_COOKIE, cookieOptions);
   res.clearCookie(TWO_FACTOR_COOKIE, cookieOptions);
   res.json({ status: 'logged out' });

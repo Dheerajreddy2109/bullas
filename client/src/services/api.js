@@ -1,10 +1,17 @@
 // All server calls live here, so a URL change never means hunting through components.
+
+export const LOGGED_OUT_EVENT = 'bullas:logged-out'
 async function request(path, options = {}) {
   const res = await fetch(path, options)
   const data = await res.json().catch(() => null)
 
   // fetch only rejects on network failure, so error statuses must be turned into errors here.
   if (!res.ok) {
+    // The server's answer for an ended session. Telling the whole app lets it go to the login page
+    // instead of showing errors, e.g. after logging out on another device.
+    if (res.status === 401 && data?.error === 'Not logged in') {
+      window.dispatchEvent(new Event(LOGGED_OUT_EVENT))
+    }
     const error = new Error(data?.error ?? `HTTP ${res.status}`)
     error.status = res.status
     throw error
@@ -25,7 +32,8 @@ export const getServerHealth = () => request('/api/health')
 
 // Public site calls: the server works out which site from the address, so no ID is sent.
 export const getPublicSite = () => request('/api/site')
-export const getPublicBlog = (page = 1) => request(`/api/site/blog?page=${page}`)
+export const getPublicBlog = (page = 1, limit = 10, category = '') =>
+  request(`/api/site/blog?${new URLSearchParams({ page, limit, ...(category && { category }) })}`)
 export const getPublicPost = (slug) => request(`/api/site/blog/${encodeURIComponent(slug)}`)
 
 export const login = (email, password) => sendJson('POST', '/api/auth/login', { email, password })
@@ -75,12 +83,20 @@ export const updateSiteStatus = (id, status) =>
 export const getSiteContent = (id) => request(`/api/sites/${encodeURIComponent(id)}/content`)
 export const saveSiteContent = (id, content) =>
   sendJson('PUT', `/api/sites/${encodeURIComponent(id)}/content`, { content })
+// Per site, so owners can use them too. With dryRun the server only returns a preview.
+export const getSiteTemplates = (id) => request(`/api/sites/${encodeURIComponent(id)}/templates`)
+export const switchSiteTemplate = (id, templateSlug, { dryRun = false } = {}) =>
+  sendJson('PUT', `/api/sites/${encodeURIComponent(id)}/template`, { templateSlug, dryRun })
 
 const blogPath = (siteId, postId = '') =>
   `/api/sites/${encodeURIComponent(siteId)}/blog${postId ? `/${encodeURIComponent(postId)}` : ''}`
 
-export const listBlogPosts = (siteId, { page = 1, status } = {}) =>
-  request(`${blogPath(siteId)}?page=${page}${status ? `&status=${status}` : ''}`)
+export const listBlogPosts = (siteId, { page = 1, status, category, limit = 10 } = {}) => {
+  const query = new URLSearchParams({ page, limit })
+  if (status) query.set('status', status)
+  if (category) query.set('category', category)
+  return request(`${blogPath(siteId)}?${query}`)
+}
 export const getBlogPost = (siteId, postId) => request(blogPath(siteId, postId))
 export const createBlogPost = (siteId, post) => sendJson('POST', blogPath(siteId), post)
 export const updateBlogPost = (siteId, postId, post) => sendJson('PUT', blogPath(siteId, postId), post)

@@ -1,10 +1,15 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import ScopeLink from '../ScopeLink.jsx'
+import { categoryOf } from './postCategories.js'
+import SmartImage from '../sections/SmartImage.jsx'
 import styles from '../../css/blog/BlogPostsTable.module.css'
 
 const formatDate = (value) => (value ? new Date(value).toLocaleDateString() : '-')
 
-function BlogPostsTable({ editBase, posts, busyId, onToggleStatus, onDelete }) {
+// previewHref gives a post's preview address, or null when it can't be previewed yet.
+// previewExternal opens it in a new tab, for owners whose preview is their real website.
+function BlogPostsTable({ editBase, posts, busyId, onToggleStatus, onDelete, previewHref, previewExternal }) {
   // An in-page confirm rather than a browser pop-up, which can't be styled or tested easily.
   const [confirmId, setConfirmId] = useState(null)
 
@@ -14,8 +19,7 @@ function BlogPostsTable({ editBase, posts, busyId, onToggleStatus, onDelete }) {
       <table className={styles.table}>
         <thead>
           <tr>
-            <th>Title</th>
-            <th>Slug</th>
+            <th>Post</th>
             <th>Status</th>
             <th>Published</th>
             <th>Actions</th>
@@ -24,8 +28,19 @@ function BlogPostsTable({ editBase, posts, busyId, onToggleStatus, onDelete }) {
         <tbody>
           {posts.map((post) => (
             <tr key={post._id}>
-              <td className={styles.title}>{post.title}</td>
-              <td>{post.slug}</td>
+              <td>
+                <div className={styles.post}>
+                  <div className={styles.thumb}>
+                    <SmartImage src={post.image} alt="" />
+                  </div>
+                  <div className={styles.text}>
+                    <span className={styles.title}>{post.title}</span>
+                    <span className={`${styles.category} ${styles[categoryOf(post).value]}`}>
+                      {categoryOf(post).label}
+                    </span>
+                  </div>
+                </div>
+              </td>
               <td>
                 <span className={`${styles.status} ${styles[post.status]}`}>{post.status}</span>
               </td>
@@ -34,6 +49,16 @@ function BlogPostsTable({ editBase, posts, busyId, onToggleStatus, onDelete }) {
                 <Link className={styles.button} to={`${editBase}/${post._id}/edit`}>
                   Edit
                 </Link>
+                {previewHref(post) ? (
+                  <ScopeLink className={styles.button} to={previewHref(post)} external={previewExternal}>
+                    Preview
+                  </ScopeLink>
+                ) : (
+                  // Visitors can't see a draft, so there is nothing to open until it's published.
+                  <span className={`${styles.button} ${styles.disabled}`} title="Publish the post to preview it">
+                    Preview
+                  </span>
+                )}
                 <button
                   className={styles.button}
                   type="button"

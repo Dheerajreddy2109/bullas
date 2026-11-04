@@ -1,0 +1,33 @@
+.button {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 18px;
+  font: inherit;
+  font-weight: 700;
+  color: #fff;
+  background: var(--brand);
+  border: 0;
+  border-radius: var(--radius-card, 10px);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+}
+
+.button:hover {
+  filter: brightness(1.08);
+}
+
+.small {
+  padding: 6px 14px;
+  font-size: var(--text-sm);
+}
+
+:global([data-look='heritage']) .button {
+  color: #5b1414;
+  background: #f6d27a;
+  border: 1px solid #d4a64a;
+}
+
+:global([data-look='green']) .button {
+  border-radius: 999px;
+}

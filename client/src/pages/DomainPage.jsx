@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
+import Breadcrumbs from '../components/Breadcrumbs.jsx'
 import DnsInstructions from '../components/domain/DnsInstructions.jsx'
 import DomainForm from '../components/domain/DomainForm.jsx'
 import DomainStatus from '../components/domain/DomainStatus.jsx'
+import { useSiteName } from '../hooks/useSiteName.js'
 import { getSiteDomain, removeSiteDomain, saveSiteDomain, verifySiteDomain } from '../services/api.js'
 import styles from '../css/DomainPage.module.css'
 
@@ -11,6 +13,7 @@ function DomainPage() {
   const [domain, setDomain] = useState(null)
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
+  const siteName = useSiteName(id)
 
   useEffect(() => {
     getSiteDomain(id)
@@ -34,9 +37,14 @@ function DomainPage() {
 
   return (
     <>
-      <Link className={styles.back} to="/sites">
-        Back to sites
-      </Link>
+      <Breadcrumbs
+        items={[
+          { label: 'Dashboard', to: '/' },
+          { label: 'Sites', to: '/sites' },
+          { label: siteName || 'Site', to: `/sites/${id}/edit` },
+          { label: 'Domain' },
+        ]}
+      />
       <h1 className={styles.title}>Custom domain</h1>
       {domain && (
         <p className={styles.intro}>

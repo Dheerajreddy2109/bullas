@@ -1,4 +1,5 @@
 import ImageField from './ImageField.jsx'
+import SelectField from './SelectField.jsx'
 import TextareaField from './TextareaField.jsx'
 import TextField from './TextField.jsx'
 import styles from '../../css/editor/ListField.module.css'
@@ -18,6 +19,10 @@ const ITEM_LABELS = {
   caption: 'Caption',
   label: 'Label',
   description: 'Description',
+  category: 'Category',
+  details: 'Details',
+  time: 'Time',
+  platform: 'Platform',
 }
 
 function ListField({ label, itemFields, value = [], siteId, onChange }) {
@@ -25,7 +30,11 @@ function ListField({ label, itemFields, value = [], siteId, onChange }) {
     onChange(value.map((item, i) => (i === index ? { ...item, [key]: nextValue } : item)))
 
   const addItem = () =>
-    onChange([...value, Object.fromEntries(Object.keys(itemFields).map((key) => [key, '']))])
+    // A choice starts on its first option, the same default the server uses.
+    onChange([
+      ...value,
+      Object.fromEntries(Object.entries(itemFields).map(([key, type]) => [key, type?.options?.[0] ?? ''])),
+    ])
 
   return (
     <fieldset className={styles.list}>
@@ -33,6 +42,17 @@ function ListField({ label, itemFields, value = [], siteId, onChange }) {
       {value.map((item, index) => (
         <div key={index} className={styles.item}>
           {Object.entries(itemFields).map(([key, type]) => {
+            if (type?.type === 'select') {
+              return (
+                <SelectField
+                  key={key}
+                  label={ITEM_LABELS[key] ?? key}
+                  value={item[key]}
+                  options={type.options}
+                  onChange={(nextValue) => updateItem(index, key, nextValue)}
+                />
+              )
+            }
             const Field = ITEM_FIELDS[type] ?? TextField
             return (
               <Field

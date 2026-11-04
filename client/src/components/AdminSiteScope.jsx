@@ -7,11 +7,16 @@ function AdminSiteScope() {
   const scope = {
     siteId: id,
     base: `/sites/${id}`,
-    backHref: '/sites',
-    backLabel: 'Back to sites',
     previewHref: `/sites/${id}/preview`,
     blogPreviewHref: `/sites/${id}/blog/preview`,
     previewIsExternal: false,
+    // The start of every breadcrumb trail for this site; pages add their own last part.
+    needsSiteName: true,
+    siteCrumbs: (siteName) => [
+      { label: 'Dashboard', to: '/' },
+      { label: 'Sites', to: '/sites' },
+      { label: siteName || 'Site', to: `/sites/${id}/edit` },
+    ],
   }
 
   return (

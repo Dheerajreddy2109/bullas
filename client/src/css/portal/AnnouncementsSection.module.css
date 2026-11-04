@@ -1,0 +1,16 @@
+.subtitle {
+  margin: calc(var(--space-3) * -1) 0 var(--space-4);
+  color: var(--text);
+}
+
+/* As many as fit; five in a row on a laptop, one or two on a phone. */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--space-3);
+}
+
+.footer {
+  margin-top: var(--space-4);
+  text-align: center;
+}

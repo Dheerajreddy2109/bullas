@@ -1,0 +1,106 @@
+.breadcrumbs {
+  min-width: 0;
+  margin-bottom: 8px;
+}
+
+/* One line always: on narrow screens it scrolls sideways instead of wrapping. */
+.list {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  overflow-x: auto;
+  font-size: 14px;
+  white-space: nowrap;
+  list-style: none;
+  scrollbar-width: none;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.item + .item::before {
+  margin: 0 8px;
+  font-size: 16px;
+  color: var(--crumb-separator);
+  content: '›';
+}
+
+.link,
+.current {
+  display: inline-flex;
+  align-items: center;
+  /* Long site or post names are cut off with "…" so the trail stays on one line. */
+  max-width: 240px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.link {
+  padding: 2px 4px;
+  color: var(--crumb-link);
+  text-decoration: none;
+  border-radius: 6px;
+}
+
+.link:hover {
+  color: var(--crumb-hover);
+  background: var(--crumb-hover-bg);
+}
+
+.current {
+  padding: 2px 4px;
+  font-weight: 700;
+  color: var(--crumb-current);
+}
+
+.home {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Grey links on the light admin pages. */
+.admin {
+  --crumb-link: #6b7280;
+  --crumb-hover: #0b6b3a;
+  --crumb-hover-bg: #e8f3ec;
+  --crumb-current: #111827;
+  --crumb-separator: #c0c4cc;
+}
+
+/* On the dark preview bars. */
+.light {
+  margin: 0;
+  --crumb-link: rgba(255, 255, 255, 0.75);
+  --crumb-hover: #fff;
+  --crumb-hover-bg: rgba(255, 255, 255, 0.12);
+  --crumb-current: #fff;
+  --crumb-separator: rgba(255, 255, 255, 0.4);
+}
+
+/* On public sites, in each site's own brand colour. */
+.site {
+  margin-bottom: 20px;
+  --crumb-link: var(--brand);
+  --crumb-hover: var(--brand);
+  --crumb-hover-bg: color-mix(in srgb, var(--brand) 10%, white);
+  --crumb-current: var(--ink);
+  --crumb-separator: #c0c4cc;
+}
+
+.site .list {
+  font-size: 15px;
+}

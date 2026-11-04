@@ -33,6 +33,9 @@ const siteSchema = new mongoose.Schema(
     builderId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', index: true },
     // A private copy, so editing this site never changes the template or any other site.
     content: { type: mongoose.Schema.Types.Mixed, required: true },
+    // Content saved under each template the site used before, so switching back loses nothing.
+    // Never sent to the browser; only the template-switch route reads it.
+    contentArchive: { type: mongoose.Schema.Types.Mixed, default: {} },
     customDomain: {
       type: String,
       lowercase: true,

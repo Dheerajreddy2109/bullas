@@ -1,16 +1,24 @@
 .block {
-  padding: 18px;
-  border-radius: 14px;
-  /* The sticky preview bar would otherwise cover a section's heading. */
-  scroll-margin-top: 56px;
+  /* The sticky menu would otherwise cover a section's heading after a menu jump. */
+  scroll-margin-top: 88px;
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-5);
 }
 
 .heading {
   display: flex;
-  gap: 10px;
+  gap: var(--space-3);
   align-items: center;
-  margin: 0 0 14px;
-  font-size: clamp(20px, 3vw, 28px);
+  margin: 0;
+  font-size: var(--text-2xl);
+  font-weight: 800;
   line-height: 1.25;
   color: var(--ink);
 }
@@ -19,38 +27,127 @@
   display: grid;
   place-items: center;
   flex-shrink: 0;
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
+  font-size: var(--text-lg);
   font-weight: 800;
-  color: #fff;
-  background: #d81e2c;
+  color: var(--number-text, #fff);
+  background: var(--number-bg, #d81e2c);
   border-radius: 50%;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--number-bg, #d81e2c) 15%, transparent);
 }
 
-.plain {
-  padding-inline: 0;
+/* Panels: the same inner padding for every coloured section, so content edges line up. */
+.cream,
+.green,
+.blue,
+.peach,
+.pink,
+.violet,
+.white {
+  padding: var(--space-6);
+  border: var(--panel-border, 1px solid rgba(0, 0, 0, 0.05));
+  border-radius: var(--radius-panel, var(--radius-lg));
 }
 
 .cream {
-  background: #fff7e6;
-}
-
-.blue {
-  background: #e6f1fb;
-}
-
-.peach {
-  background: #ffeee4;
-}
-
-.pink {
-  background: #fdeaf1;
+  background: var(--tone-cream, #fff8e8);
 }
 
 .green {
-  background: #e9f7ea;
+  background: var(--tone-green, #ecf8ee);
+}
+
+.blue {
+  background: var(--tone-blue, #eaf3fc);
+}
+
+.peach {
+  background: var(--tone-peach, #fff1e6);
+}
+
+.pink {
+  background: var(--tone-pink, #fdeef3);
 }
 
 .violet {
-  background: #f1ecfc;
+  background: var(--tone-violet, #f3effd);
+}
+
+.white {
+  background: var(--surface, #fff);
+}
+
+@container (max-width: 720px) {
+  .cream,
+  .green,
+  .blue,
+  .peach,
+  .pink,
+  .violet,
+  .white {
+    padding: var(--space-4);
+  }
+
+  .number {
+    width: 36px;
+    height: 36px;
+    font-size: var(--text-md);
+  }
+}
+
+/* ---------- Each look's own shapes ---------- */
+/* Heritage: a gold diamond badge, a double gold rule under headings and a temple-style inner frame. */
+:global([data-look='heritage']) .number {
+  position: relative;
+  isolation: isolate;
+  background: none;
+  box-shadow: none;
+}
+
+:global([data-look='heritage']) .number::before {
+  position: absolute;
+  inset: 5px;
+  z-index: -1;
+  content: '';
+  background: var(--number-bg);
+  border: 2px solid #d4a64a;
+  transform: rotate(45deg);
+}
+
+:global([data-look='heritage']) .header {
+  padding-bottom: var(--space-3);
+  border-bottom: 3px double #d4a64a;
+}
+
+:global([data-look='heritage']) :is(.cream, .green, .blue, .peach, .pink, .violet, .white) {
+  outline: 1px solid #d4a64a;
+  outline-offset: -8px;
+}
+
+/* Modern Clean: a small square badge and flat white panels with a thin line. */
+:global([data-look='modern']) .number {
+  width: 34px;
+  height: 34px;
+  font-size: var(--text-md);
+  border-radius: 8px;
+  box-shadow: none;
+}
+
+:global([data-look='modern']) .heading {
+  font-size: var(--text-xl);
+  letter-spacing: -0.01em;
+}
+
+:global([data-look='modern']) :is(.cream, .green, .blue, .peach, .pink, .violet, .white) {
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+}
+
+/* Green Village: a leaf-shaped badge and a soft leaf glow in each panel's corner. */
+:global([data-look='green']) .number {
+  border-radius: 50% 0;
+}
+
+:global([data-look='green']) :is(.cream, .green, .blue, .peach, .pink, .violet, .white) {
+  background-image: radial-gradient(circle at 100% 0%, rgba(134, 192, 108, 0.22), transparent 40%);
 }

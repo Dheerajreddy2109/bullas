@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
+import Breadcrumbs from '../components/Breadcrumbs.jsx'
+import LoginLinks from '../components/LoginLinks.jsx'
 import OwnerResetForm from '../components/OwnerResetForm.jsx'
 import OwnerStatusCard from '../components/OwnerStatusCard.jsx'
 import TwoFactorResetCard from '../components/twofactor/TwoFactorResetCard.jsx'
 import { getSiteOwner, resetOwnerPassword, resetOwnerTwoFactor, setOwnerDisabled } from '../services/api.js'
+import { siteAddress } from '../utils/siteAddress.js'
 import styles from '../css/OwnerManagePage.module.css'
 
 function OwnerManagePage() {
@@ -21,9 +24,14 @@ function OwnerManagePage() {
 
   return (
     <>
-      <Link className={styles.back} to="/sites">
-        Back to sites
-      </Link>
+      <Breadcrumbs
+        items={[
+          { label: 'Dashboard', to: '/' },
+          { label: 'Sites', to: '/sites' },
+          { label: data?.site.name ?? 'Site', to: `/sites/${id}/edit` },
+          { label: 'Owner' },
+        ]}
+      />
       <h1 className={styles.title}>Manage owner{data && `: ${data.site.name}`}</h1>
       {error && <p role="alert">Could not load the owner: {error}</p>}
       {!data && !error && <p>Loading...</p>}
@@ -35,6 +43,12 @@ function OwnerManagePage() {
             onChange={updateOwner}
           />
           <OwnerResetForm resetPassword={(password) => resetOwnerPassword(id, password)} onReset={updateOwner} />
+          <LoginLinks
+            links={[
+              { label: 'Website', url: siteAddress(data.site.subdomain) },
+              { label: 'Owner login', url: siteAddress(data.site.subdomain, '/admin') },
+            ]}
+          />
           <TwoFactorResetCard
             enabled={data.owner.twoFactorEnabled}
             reset={() => resetOwnerTwoFactor(id)}

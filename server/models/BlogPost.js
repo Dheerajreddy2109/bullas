@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { DEFAULT_CATEGORY, POST_CATEGORIES } from '../src/utils/blogRules.js';
 
 const blogPostSchema = new mongoose.Schema(
   {
@@ -21,6 +22,8 @@ const blogPostSchema = new mongoose.Schema(
     description: { type: String, default: '', maxlength: 500 },
     body: { type: String, default: '' },
     image: { type: String, default: '' },
+    // Which tab of the site's Posts section shows this post.
+    category: { type: String, enum: POST_CATEGORIES, default: DEFAULT_CATEGORY },
     // Draft by default so unfinished writing isn't shown to the public.
     status: { type: String, enum: ['draft', 'published'], default: 'draft' },
     publishedAt: { type: Date },
@@ -32,5 +35,7 @@ const blogPostSchema = new mongoose.Schema(
 blogPostSchema.index({ siteId: 1, slug: 1 }, { unique: true });
 // Starts with siteId because a public blog page always lists one site's latest posts.
 blogPostSchema.index({ siteId: 1, status: 1, publishedAt: -1 });
+// For the Posts tabs, which list one category's latest published posts.
+blogPostSchema.index({ siteId: 1, status: 1, category: 1, publishedAt: -1 });
 
 export default mongoose.model('BlogPost', blogPostSchema);

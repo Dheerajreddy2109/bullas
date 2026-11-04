@@ -60,6 +60,15 @@ export function requireAdminHost(req, res, next) {
 }
 
 // Checks who is asking, for the few routes someone with a temporary password may still use.
+// Reads a login token without refusing the request, for logout, which must work even when expired.
+export function readLoginToken(token) {
+  try {
+    return jwt.verify(token, JWT_SECRET, { algorithms: ['HS256'], audience: AUDIENCE });
+  } catch {
+    return null;
+  }
+}
+
 export async function requireLogin(req, res, next) {
   let payload;
   try {

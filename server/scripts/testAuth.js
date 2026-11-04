@@ -221,6 +221,17 @@ try {
       !(await bcrypt.compare(PASSWORD, storedTemp.passwordHash))
   );
 
+  // Two logins for one account, as if on a laptop and a phone.
+  const laptop = tokenFrom(await login(HOST_B, `${PREFIX}b${EMAIL_DOMAIN}`));
+  const phone = tokenFrom(await login(HOST_B, `${PREFIX}b${EMAIL_DOMAIN}`));
+  check('two devices can be logged in at once', (await api({ path: '/api/auth/me', host: HOST_B, cookie: phone })).status === 200);
+  await api({ method: 'POST', path: '/api/auth/logout', host: HOST_B, cookie: laptop, body: {} });
+  check('logging out on one device logs out every device', (await api({ path: '/api/auth/me', host: HOST_B, cookie: phone })).status === 401);
+  check('and the device that logged out', (await api({ path: '/api/auth/me', host: HOST_B, cookie: laptop })).status === 401);
+  const fresh = tokenFrom(await login(HOST_B, `${PREFIX}b${EMAIL_DOMAIN}`));
+  await api({ method: 'POST', path: '/api/auth/logout', host: HOST_B, cookie: laptop, body: {} });
+  check('an old logged-out cookie cannot log out a newer session', (await api({ path: '/api/auth/me', host: HOST_B, cookie: fresh })).status === 200);
+
   const logout = await api({ method: 'POST', path: '/api/auth/logout', host: HOST_A, body: {} });
   check('logout clears the cookie', logout.status === 200 && /Expires=Thu, 01 Jan 1970/i.test(logout.setCookie));
 

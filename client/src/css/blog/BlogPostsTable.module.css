@@ -28,10 +28,35 @@
   border-bottom: 0;
 }
 
-.table td.title {
-  max-width: 280px;
+.post {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+  min-width: 220px;
+}
+
+/* A small fixed-size picture, so every row lines up whether or not the post has an image. */
+.thumb {
+  flex-shrink: 0;
+  width: 64px;
+  height: 44px;
   overflow: hidden;
+  border-radius: 6px;
+  --brand: #0b6b3a;
+}
+
+/* Block so a long title is cut off with "…" instead of widening the table. */
+.title {
+  display: block;
+  max-width: 320px;
+  overflow: hidden;
+  font-weight: 600;
+  color: var(--text-heading);
   text-overflow: ellipsis;
+}
+
+.table td {
+  vertical-align: middle;
 }
 
 .table td.actions {
@@ -78,4 +103,44 @@
   color: #fff;
   background: #b91c1c;
   border-color: #b91c1c;
+}
+
+.disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.text {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+/* A small coloured label, so each post's tab on the site is visible at a glance. */
+.category {
+  justify-self: start;
+  padding: 1px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 999px;
+}
+
+.history {
+  color: #92400e;
+  background: #fef3c7;
+}
+
+.daily {
+  color: #1e40af;
+  background: #dbeafe;
+}
+
+.announcement {
+  color: #9d174d;
+  background: #fce7f3;
+}
+
+.gallery {
+  color: #5b21b6;
+  background: #ede9fe;
 }

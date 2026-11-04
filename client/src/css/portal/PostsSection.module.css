@@ -1,0 +1,47 @@
+/* Tabs take most of the width; recent posts sit in a narrow column on the right. */
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: var(--space-5);
+  align-items: start;
+}
+
+.stack {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--space-3);
+}
+
+.more {
+  display: inline-block;
+  margin-top: var(--space-3);
+  font-weight: 700;
+  color: var(--brand);
+  text-decoration: none;
+}
+
+.more:hover {
+  text-decoration: underline;
+}
+
+.empty {
+  margin: 0;
+  color: var(--text);
+}
+
+/* Invisible landing points for old menu links; they need the sticky menu's room too. */
+.anchor {
+  display: block;
+  scroll-margin-top: 88px;
+}
+
+@container (max-width: 960px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

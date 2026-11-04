@@ -28,7 +28,7 @@ function AdminApp() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/login" element={<LoginPage />} />
+          <Route path="/login" element={<LoginPage logo="/logo.jpeg" logoAlt="Bullas Group" />} />
           <Route
             element={<ProtectedRoute roles={['superadmin', 'builder']} changePasswordPath="/change-password" twoFactorPath="/two-factor" />}
           >

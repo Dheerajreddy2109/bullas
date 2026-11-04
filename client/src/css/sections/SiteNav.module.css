@@ -1,0 +1,163 @@
+.nav {
+  width: 100%;
+}
+
+.list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.link {
+  display: block;
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--text-md);
+  font-weight: 600;
+  line-height: 1.3;
+  text-decoration: none;
+  white-space: nowrap;
+  border-radius: var(--radius-sm);
+}
+
+/* The phone button is hidden on wider screens. */
+.toggle {
+  display: none;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  font: inherit;
+  font-weight: 600;
+  color: inherit;
+  background: transparent;
+  border: 1px solid currentColor;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+/* Pills: the village portal's coloured buttons, in a repeating set of colours. */
+.pills .list {
+  justify-content: center;
+}
+
+.pills .link {
+  color: #fff;
+  background: var(--pill-1, #1d5fc4);
+  box-shadow: var(--shadow-sm);
+}
+
+.pills li:nth-child(6n + 2) .link {
+  background: var(--pill-2, #c9540f);
+}
+
+.pills li:nth-child(6n + 3) .link {
+  background: var(--pill-3, #137a40);
+}
+
+.pills li:nth-child(6n + 4) .link {
+  background: var(--pill-4, #7c3aed);
+}
+
+.pills li:nth-child(6n + 5) .link {
+  background: var(--pill-5, #d81e5b);
+}
+
+.pills li:nth-child(6n) .link {
+  background: var(--pill-6, #0e7490);
+}
+
+.pills .link:hover {
+  filter: brightness(1.1);
+}
+
+/* Bar: light text on the template's brand colour. */
+.bar .list {
+  justify-content: flex-end;
+}
+
+.bar .link {
+  color: #fff;
+}
+
+.bar .link:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Plain: quiet links for the portfolio. */
+.plain .list {
+  justify-content: flex-end;
+  gap: var(--space-1);
+}
+
+.plain .link {
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.plain .link:hover {
+  color: var(--brand);
+}
+
+@container (max-width: 720px) {
+  .toggle {
+    display: inline-flex;
+  }
+
+  .pills .toggle {
+    color: var(--ink);
+  }
+
+  .bar .toggle {
+    color: #fff;
+  }
+
+  /* Beside a brand name (split, minimal): the button sits on the right of the same row,
+     and the opened list drops below at full width. */
+  .bar,
+  .plain {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  .bar .list,
+  .plain .list {
+    width: 100%;
+  }
+
+  /* On phones the links become a full-width list under the button. */
+  .list {
+    display: none;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    gap: var(--space-1);
+    margin-top: var(--space-2);
+  }
+
+  .open {
+    display: flex;
+  }
+
+  .link {
+    white-space: normal;
+  }
+}
+
+/* Each look's menu buttons. */
+:global([data-look='heritage']) .pills .link {
+  color: #fde9b5;
+  border: 1px solid #d4a64a;
+  border-radius: 4px;
+}
+
+:global([data-look='modern']) .pills .link {
+  border-radius: 6px;
+  box-shadow: none;
+}
+
+:global([data-look='green']) .pills .link {
+  border-radius: 999px;
+}

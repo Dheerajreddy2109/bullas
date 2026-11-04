@@ -16,3 +16,16 @@
   font-weight: 600;
   color: #fff;
 }
+
+/* Quick links on the right side of the bar, next to the trail. */
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  align-items: center;
+  margin-left: auto;
+}
+
+.status {
+  color: rgba(255, 255, 255, 0.7);
+}

@@ -1,8 +1,7 @@
 import { Link } from 'react-router-dom'
 import SmartImage from './SmartImage.jsx'
+import { postDate } from '../portal/postDate.js'
 import styles from '../../css/sections/BlogList.module.css'
-
-const formatDate = (value) => (value ? new Date(value).toLocaleDateString('en-IN') : '')
 
 // postHref is a prop, so the admin preview and the real site can use different addresses.
 function BlogList({ posts, postHref, emptyText = 'No posts yet.' }) {
@@ -14,7 +13,7 @@ function BlogList({ posts, postHref, emptyText = 'No posts yet.' }) {
         <Link key={post._id ?? post.slug} className={styles.card} to={postHref(post)}>
           <SmartImage className={styles.image} src={post.image} alt={post.title} />
           <div className={styles.body}>
-            <p className={styles.date}>{formatDate(post.publishedAt)}</p>
+            <p className={styles.date}>{postDate(post)}</p>
             <h3 className={styles.title}>{post.title}</h3>
             {post.description && <p className={styles.description}>{post.description}</p>}
           </div>

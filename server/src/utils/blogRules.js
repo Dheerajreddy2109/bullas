@@ -8,6 +8,10 @@ const MAX_TITLE = 200;
 const MAX_DESCRIPTION = 500;
 const MAX_BODY = 50000;
 
+// Which tab of the site's Posts section a post appears in.
+export const POST_CATEGORIES = ['history', 'daily', 'announcement', 'gallery'];
+export const DEFAULT_CATEGORY = 'daily';
+
 export function slugify(title) {
   const slug = title
     .normalize('NFC')
@@ -64,6 +68,13 @@ export function readPostInput(body, siteId, { creating }) {
 
   if (input.image !== undefined) post.image = checkImage(input.image, 'Image', siteId);
 
+  if (input.category !== undefined) {
+    if (!POST_CATEGORIES.includes(input.category)) {
+      throw new ContentError(`Category must be one of: ${POST_CATEGORIES.join(', ')}`);
+    }
+    post.category = input.category;
+  }
+
   if (input.slug !== undefined && input.slug !== '') {
     const slug = checkText(input.slug, 'Slug', MAX_SLUG).normalize('NFC').toLowerCase();
     if (!SLUG_PATTERN.test(slug)) {
@@ -73,6 +84,14 @@ export function readPostInput(body, siteId, { creating }) {
   }
 
   return post;
+}
+
+// For ?category= in post lists. undefined means no filter, null means a bad value (answer 400).
+// Posts saved before categories existed have none, and count as daily updates.
+export function categoryFilter(value) {
+  if (value === undefined || value === '') return undefined;
+  if (!POST_CATEGORIES.includes(value)) return null;
+  return value === DEFAULT_CATEGORY ? { $in: [DEFAULT_CATEGORY, null] } : value;
 }
 
 // Returns null for a bad page number, so the route can answer 400 instead of guessing.

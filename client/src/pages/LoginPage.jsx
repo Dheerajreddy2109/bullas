@@ -1,9 +1,11 @@
 import { Navigate, useLocation } from 'react-router-dom'
+import BrandLogo from '../components/BrandLogo.jsx'
 import LoginForm from '../components/LoginForm.jsx'
 import { useAuth } from '../hooks/useAuth.js'
 import styles from '../css/LoginPage.module.css'
 
-function LoginPage({ title = 'Bullas Super Admin', homePath = '/' }) {
+// logo is optional: only the Bullas admin login passes one for now.
+function LoginPage({ title = 'Bullas Super Admin', homePath = '/', logo, logoAlt = '' }) {
   const { user, loading } = useAuth()
   const location = useLocation()
 
@@ -13,6 +15,7 @@ function LoginPage({ title = 'Bullas Super Admin', homePath = '/' }) {
   return (
     <main className={styles.page}>
       <div className={styles.card}>
+        {logo && <BrandLogo src={logo} alt={logoAlt} size="login" />}
         <h1 className={styles.title}>{title}</h1>
         <LoginForm />
       </div>

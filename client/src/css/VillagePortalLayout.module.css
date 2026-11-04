@@ -1,0 +1,37 @@
+.site {
+  /* Sections choose their layout from this page's width, not the screen's, so the small preview
+     in Edit website arranges itself just as a phone or tablet would. */
+  container-type: inline-size;
+  --ink: #12263f;
+  --footer: #10243e;
+
+  font-family: var(--font-body, inherit);
+  color: var(--text, #374151);
+  background: var(--page-bg, #f7f9fb);
+}
+
+/* Theme fonts for every heading in the site, whatever part it's in. */
+.site :is(h1, h2, h3, h4) {
+  font-family: var(--font-heading, inherit);
+  font-weight: var(--heading-weight, 800);
+}
+
+/* The same gap between every section, and room above the first one. */
+.sections {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding-top: var(--space-6);
+}
+
+.twoPanels {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+@container (max-width: 900px) {
+  .twoPanels {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

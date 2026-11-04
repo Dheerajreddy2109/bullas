@@ -1,10 +1,10 @@
 import mongoose from 'mongoose';
 import BlogPost from '../../models/BlogPost.js';
-import { readPage, readPostInput, slugify } from '../utils/blogRules.js';
+import { categoryFilter, readPage, readPostInput, slugify } from '../utils/blogRules.js';
 import { ContentError } from '../utils/sanitizeContent.js';
 import { scoped } from '../utils/scoped.js';
 
-const LIST_FIELDS = 'title slug description image status publishedAt updatedAt';
+const LIST_FIELDS = 'title slug description image category status publishedAt updatedAt';
 
 // Every query goes through scoped(), so this site's ID is always part of the filter.
 const postsOf = (req) => scoped(BlogPost, req.managedSite._id);
@@ -46,6 +46,9 @@ export async function listPosts(req, res) {
 
   const filter = {};
   if (req.query.status === 'draft' || req.query.status === 'published') filter.status = req.query.status;
+  const category = categoryFilter(req.query.category);
+  if (category === null) return res.status(400).json({ error: 'Invalid category' });
+  if (category !== undefined) filter.category = category;
 
   const posts = postsOf(req);
   const sort = filter.status === 'published' ? { publishedAt: -1 } : { updatedAt: -1 };

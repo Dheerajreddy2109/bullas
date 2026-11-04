@@ -37,6 +37,13 @@ function checkLink(value, label) {
   return link;
 }
 
+// An empty choice (a newly added item) takes the first option, so the site always has a valid one.
+function checkChoice(options, value, label) {
+  if (value === '') return options[0];
+  if (!options.includes(value)) throw new ContentError(`${label} must be one of: ${options.join(', ')}`);
+  return value;
+}
+
 function checkValue(type, value, label, siteId) {
   if (type === 'text') return checkString(value, label, MAX_TEXT);
   if (type === 'textarea') return checkString(value, label, MAX_TEXTAREA);
@@ -59,9 +66,13 @@ function checkList(field, value, siteId) {
     for (const [key, type] of Object.entries(field.itemFields)) {
       const itemValue = item[key] ?? '';
       const label = `${field.label}: ${key}`;
-      clean[key] = key === 'href'
-        ? checkLink(itemValue, label)
-        : checkValue(type, itemValue, label, siteId);
+      if (type?.type === 'select') {
+        clean[key] = checkChoice(type.options, itemValue, label);
+      } else {
+        clean[key] = key === 'href'
+          ? checkLink(itemValue, label)
+          : checkValue(type, itemValue, label, siteId);
+      }
     }
     return clean;
   });

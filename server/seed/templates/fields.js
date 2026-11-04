@@ -25,3 +25,7 @@ export const contact = (title = 'Contact', address = 'Your address goes here') =
     phone: text('Phone'),
     email: text('Email'),
   });
+
+// A fixed choice inside a list item, e.g. an announcement's category.
+// The server only accepts one of the options, so the site can rely on them for filters and icons.
+export const choice = (options) => ({ type: 'select', options });

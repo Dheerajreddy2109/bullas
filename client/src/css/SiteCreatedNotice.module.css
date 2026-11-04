@@ -29,6 +29,11 @@
   overflow-wrap: anywhere;
 }
 
+.hint {
+  font-size: 13px;
+  color: var(--text);
+}
+
 .password {
   font-family: ui-monospace, Menlo, monospace;
   color: var(--text-heading);

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Link, useParams, useSearchParams } from 'react-router-dom'
+import { useParams, useSearchParams } from 'react-router-dom'
+import Breadcrumbs from '../components/Breadcrumbs.jsx'
 import { getTemplate } from '../services/api.js'
 import { templateLayouts } from '../templates/registry.js'
 import styles from '../css/TemplatePreviewPage.module.css'
@@ -26,10 +27,15 @@ function TemplatePreviewPage() {
     <>
       {!searchParams.has('thumbnail') && (
         <div className={styles.bar}>
-          <Link className={styles.back} to="/templates">
-            Back to templates
-          </Link>
-          <span>Preview: {template.name}</span>
+          <Breadcrumbs
+            look="light"
+            items={[
+              { label: 'Dashboard', to: '/' },
+              { label: 'Templates', to: '/templates' },
+              { label: template.name },
+            ]}
+          />
+          <span className={styles.actions}>Sample content</span>
         </div>
       )}
       <Layout content={template.defaultContent} />

@@ -1,6 +1,6 @@
 import BlogPost from '../../models/BlogPost.js';
 import Template from '../../models/Template.js';
-import { readPage } from '../utils/blogRules.js';
+import { categoryFilter, readPage } from '../utils/blogRules.js';
 import { scoped } from '../utils/scoped.js';
 
 // Same response as an unknown site, so visitors can't discover unpublished sites.
@@ -30,10 +30,13 @@ export async function getPublicBlog(req, res) {
 
   const posts = scoped(BlogPost, req.site._id);
   const filter = { status: 'published' };
+  const category = categoryFilter(req.query.category);
+  if (category === null) return res.status(400).json({ error: 'Invalid category' });
+  if (category !== undefined) filter.category = category;
   const [items, total] = await Promise.all([
     posts
       .find(filter)
-      .select('title slug description image publishedAt -_id')
+      .select('title slug description image category publishedAt -_id')
       .sort({ publishedAt: -1 })
       .skip(paging.skip)
       .limit(paging.limit),
@@ -47,7 +50,7 @@ export async function getPublicPost(req, res) {
 
   const post = await scoped(BlogPost, req.site._id)
     .findOne({ slug: req.params.slug.normalize('NFC').toLowerCase(), status: 'published' })
-    .select('title slug description body image publishedAt -_id');
+    .select('title slug description body image category publishedAt -_id');
   // Drafts get the same 404 as missing posts, so their slugs can't be discovered.
   if (!post) return res.status(404).json({ error: 'Post not found' });
   res.json(post);

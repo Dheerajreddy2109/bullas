@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import {
+  changeSiteTemplate,
   getSiteContent,
+  listSiteTemplates,
   updateSiteContent,
   uploadSiteImage,
 } from '../controllers/siteContentController.js';
@@ -17,6 +19,9 @@ const canManage = [requireAuth, requireSiteAccess];
 
 router.get('/content', canManage, getSiteContent);
 router.put('/content', requireJson, canManage, updateSiteContent);
+// Anyone who can edit the site can switch its template; old content is archived, never deleted.
+router.get('/templates', canManage, listSiteTemplates);
+router.put('/template', requireJson, canManage, changeSiteTemplate);
 // Permission comes first, so a refused request never gets to send a file.
 router.post('/upload', canManage, requireUploadHeader, uploadImage, uploadSiteImage);
 

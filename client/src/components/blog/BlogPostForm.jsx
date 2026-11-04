@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import ImageField from '../editor/ImageField.jsx'
 import RichTextEditor from './RichTextEditor.jsx'
+import { categoryOf, POST_CATEGORIES } from './postCategories.js'
 import { createBlogPost, updateBlogPost } from '../../services/api.js'
 import styles from '../../css/blog/BlogPostForm.module.css'
 
 function BlogPostForm({ siteId, post, onSaved }) {
   const [form, setForm] = useState({
+    category: categoryOf(post).value,
     title: post?.title ?? '',
     slug: post?.slug ?? '',
     description: post?.description ?? '',
@@ -37,6 +39,18 @@ function BlogPostForm({ siteId, post, onSaved }) {
 
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
+      {/* Decides which tab of the site's Posts section shows this post. */}
+      <label className={styles.label}>
+        Category
+        <select className={styles.input} value={form.category} onChange={(event) => update('category', event.target.value)}>
+          {POST_CATEGORIES.map((item) => (
+            <option key={item.value} value={item.value}>
+              {item.label} ({item.telugu})
+            </option>
+          ))}
+        </select>
+      </label>
+
       <label className={styles.label}>
         Title
         <input

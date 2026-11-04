@@ -1,0 +1,128 @@
+.card {
+  --accent: var(--brand);
+  --wash: var(--surface, #fff);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  height: 100%;
+  padding: var(--space-3);
+  box-sizing: border-box;
+  text-align: center;
+  background: var(--wash);
+  border: 2px solid var(--accent);
+  border-radius: var(--radius-card, 12px);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Each category's colours. */
+.birthday {
+  --accent: #db2777;
+  --wash: #fff5fa;
+}
+
+.wedding {
+  --accent: #ca8a04;
+  --wash: #fffbeb;
+}
+
+.business {
+  --accent: #15803d;
+  --wash: #f4fbf5;
+}
+
+.jobs {
+  --accent: #1d4ed8;
+  --wash: #f3f7ff;
+}
+
+.others {
+  --accent: #7c3aed;
+  --wash: #f8f5ff;
+}
+
+.badge {
+  padding: 2px 10px;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  color: #fff;
+  background: var(--accent);
+  border-radius: 999px;
+}
+
+.roundPhoto {
+  flex-shrink: 0;
+  width: 104px;
+  height: 104px;
+  border: 3px solid var(--accent);
+}
+
+.widePhoto {
+  flex-shrink: 0;
+  aspect-ratio: 16 / 9;
+  height: auto;
+  border-radius: 8px;
+}
+
+.title {
+  margin: 0;
+  font-size: var(--text-md);
+  line-height: 1.35;
+  color: var(--accent);
+}
+
+.date {
+  margin: 0;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.details {
+  margin: 0;
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  white-space: pre-line;
+  color: var(--text);
+}
+
+/* margin-top: auto keeps phone numbers on one line across a row of cards. */
+.phone {
+  margin-top: auto;
+  padding-top: var(--space-1);
+  font-weight: 700;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.phone:hover {
+  text-decoration: underline;
+}
+
+/* ---------- Each look ---------- */
+/* These looks keep to their own colours, so the category colours are replaced. */
+:global([data-look='heritage']) .card {
+  --accent: #7f1d1d;
+  --wash: var(--surface);
+  border-color: #d4a64a;
+}
+
+:global([data-look='modern']) .card {
+  --wash: var(--surface);
+  border-width: 1px;
+  border-color: #e2e8f0;
+  border-top: 3px solid var(--accent);
+  box-shadow: none;
+}
+
+:global([data-look='green']) .card {
+  --accent: #15803d;
+  --wash: var(--surface);
+  border-width: 1px;
+}
+
+:global([data-look='green']) .wedding,
+:global([data-look='green']) .others {
+  --accent: #854d0e;
+}

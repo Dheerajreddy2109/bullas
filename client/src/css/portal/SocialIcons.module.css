@@ -1,0 +1,53 @@
+.list {
+  display: flex;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.icon {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  color: #fff;
+  border-radius: 50%;
+  transition: transform 0.15s;
+}
+
+.icon:hover {
+  transform: scale(1.1);
+}
+
+.icon svg {
+  width: 60%;
+  height: 60%;
+  fill: currentColor;
+}
+
+.large .icon {
+  width: 36px;
+  height: 36px;
+}
+
+/* Each platform's own colour, so visitors recognise them at a glance. */
+.facebook {
+  background: #1877f2;
+}
+
+.youtube {
+  background: #ff0000;
+}
+
+.instagram {
+  background: radial-gradient(circle at 30% 110%, #fdf497 0%, #fd5949 45%, #d6249f 60%, #285aeb 90%);
+}
+
+.whatsapp {
+  background: #25d366;
+}
+
+.x {
+  background: #111;
+}

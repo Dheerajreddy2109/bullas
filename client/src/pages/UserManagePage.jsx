@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
+import Breadcrumbs from '../components/Breadcrumbs.jsx'
+import LoginLinks from '../components/LoginLinks.jsx'
 import OwnerResetForm from '../components/OwnerResetForm.jsx'
 import OwnerStatusCard from '../components/OwnerStatusCard.jsx'
 import TwoFactorResetCard from '../components/twofactor/TwoFactorResetCard.jsx'
@@ -19,9 +21,9 @@ function UserManagePage() {
 
   return (
     <>
-      <Link className={styles.back} to="/users">
-        Back to users
-      </Link>
+      <Breadcrumbs
+        items={[{ label: 'Dashboard', to: '/' }, { label: 'Users', to: '/users' }, { label: user?.name ?? 'Builder' }]}
+      />
       <h1 className={styles.title}>Manage builder{user && `: ${user.name}`}</h1>
       {error && <p role="alert">Could not load this user: {error}</p>}
       {!user && !error && <p>Loading...</p>}
@@ -39,6 +41,8 @@ function UserManagePage() {
             resetPassword={(password) => resetUserPassword(userId, password)}
             onReset={(updated) => setUser((current) => ({ ...current, ...updated }))}
           />
+          {/* Builders log in on this same admin address. */}
+          <LoginLinks links={[{ label: 'Builder login', url: `${window.location.origin}/login` }]} />
           <TwoFactorResetCard
             enabled={user.twoFactorEnabled}
             reset={() => resetUserTwoFactor(userId)}

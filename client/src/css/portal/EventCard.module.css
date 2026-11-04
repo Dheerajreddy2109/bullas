@@ -1,0 +1,92 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 100%;
+  background: var(--surface, #fff);
+  border: 2px solid var(--event-colour);
+  border-radius: var(--radius-card, 12px);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Always two lines tall, so pictures line up across the row even when one title is short. */
+.title {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  box-sizing: content-box;
+  height: 2.7em;
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-md);
+  line-height: 1.35;
+  text-align: center;
+  color: #fff;
+  background: var(--event-colour);
+}
+
+/* The two-line limit is here, because the strip above needs flex to centre the text. */
+.titleText {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.image {
+  flex-shrink: 0;
+  aspect-ratio: 16 / 10;
+  height: auto;
+}
+
+.details {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: var(--space-3);
+  list-style: none;
+}
+
+.detail {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-start;
+  font-size: var(--text-sm);
+  line-height: 1.35;
+  color: var(--ink);
+}
+
+.icon {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  margin-top: 1px;
+  fill: var(--event-colour);
+}
+
+.place {
+  fill: #dc2626;
+}
+
+/* ---------- Each look ---------- */
+:global([data-look='heritage']) .card {
+  border-color: #d4a64a;
+}
+
+:global([data-look='heritage']) .title {
+  color: #f6d27a;
+}
+
+/* Modern Clean: a thin line around the card, and a coloured line above a plain title. */
+:global([data-look='modern']) .card {
+  border-width: 1px;
+  border-color: #e2e8f0;
+  border-top: 3px solid var(--event-colour);
+  box-shadow: none;
+}
+
+:global([data-look='modern']) .title {
+  color: var(--ink);
+  background: transparent;
+}

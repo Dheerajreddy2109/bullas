@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import Breadcrumbs from '../components/Breadcrumbs.jsx'
+import { useLatestPosts } from '../hooks/useLatestPosts.js'
 import { getSiteContent } from '../services/api.js'
 import { templateLayouts } from '../templates/registry.js'
 import styles from '../css/SitePreviewPage.module.css'
@@ -9,6 +11,7 @@ function SitePreviewPage() {
   const { id } = useParams()
   const [site, setSite] = useState(null)
   const [error, setError] = useState('')
+  const latestPosts = useLatestPosts(id)
 
   useEffect(() => {
     getSiteContent(id)
@@ -24,20 +27,33 @@ function SitePreviewPage() {
   return (
     <>
       <div className={styles.bar}>
-        <Link className={styles.link} to="/sites">
-          Back to sites
-        </Link>
-        <Link className={styles.link} to={`/sites/${id}/edit`}>
-          Edit content
-        </Link>
-        <Link className={styles.link} to={`/sites/${id}/blog/preview`}>
-          View blog
-        </Link>
-        <span>
-          Preview: {site.name} ({site.status})
-        </span>
+        <Breadcrumbs
+          look="light"
+          items={[
+            { label: 'Dashboard', to: '/' },
+            { label: 'Sites', to: '/sites' },
+            { label: site.name, to: `/sites/${id}/edit` },
+            { label: 'Preview' },
+          ]}
+        />
+        <div className={styles.actions}>
+          <span className={styles.status}>{site.status}</span>
+          <Link className={styles.link} to={`/sites/${id}/edit`}>
+            Edit content
+          </Link>
+          <Link className={styles.link} to={`/sites/${id}/blog/preview`}>
+            View blog
+          </Link>
+        </div>
       </div>
-      {Layout ? <Layout content={site.content} /> : <p>No layout exists for this template yet.</p>}
+      {Layout ? (
+        <Layout
+          content={site.content}
+          latestPosts={latestPosts}
+          blogHref={`/sites/${id}/blog/preview`}
+          postHref={(post) => `/sites/${id}/blog/preview/${post._id}`}
+        />
+      ) : <p>No layout exists for this template yet.</p>}
     </>
   )
 }
